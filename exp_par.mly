@@ -9,16 +9,16 @@ open Ast
 %token DIVIDE
 %token LEQ
 %token GEQ
+%token AND
 %token EQUAL
 %token NOTEQ
-%token AND
 %token OR
 %token NOT
 
 /* Expressions */
 %token <int> INT
 %token <string> ID
-%token SEQ
+%token SEMICOLON
 %token WHILE
 %token IF
 %token ELSE
@@ -38,8 +38,8 @@ open Ast
 %token EOF
 
 %nonassoc RETURN
-%right SEQ
-%right ASG
+%right SEMICOLON
+%nonassoc ASG
 
 %left OR
 %left AND
@@ -75,7 +75,7 @@ exp:
 
   | x = ID; ASG; f = exp { Asg(Identifier(x),f) }
   | x = ID; LPAREN; f = exp; RPAREN { Application(Identifier(x),f) }
-  | e = exp; SEQ; f = exp { Seq(e,f) }
+  | e = exp; SEMICOLON; f = exp { Seq(e,f) }
 
   | WHILE; LPAREN; e = exp; RPAREN; LBRACKET; f = exp; RBRACKET { While(e,f) }
   | IF LPAREN; e = exp; RPAREN; LBRACKET f = exp; RBRACKET;
@@ -84,8 +84,8 @@ exp:
   | PRINTINT; LPAREN; e = exp; RPAREN { Printint(e) }
   | READINT; LPAREN; RPAREN { Readint }
 
-  | FINAL; NEWINT; x = ID; ASG; e = exp; SEQ; f = exp { Let(x,e,f) }
-  | NEWINT; x = ID; ASG; e = exp; SEQ; f = exp { New(x,e,f) }
+  | FINAL; NEWINT; x = ID; ASG; e = exp; SEMICOLON; f = exp { Let(x,e,f) }
+  | NEWINT; x = ID; ASG; e = exp; SEMICOLON; f = exp { New(x,e,f) }
 
 %inline op:
   | PLUS { Plus }

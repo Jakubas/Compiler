@@ -24,7 +24,7 @@ rule read =
  | '&' { AND }
  | '|' { OR }
  | '!' { NOT }
- | ';' { SEQ }
+ | ';' { SEMICOLON }
  | "while" { WHILE }
  | "if" { IF }
  | "else" { ELSE }

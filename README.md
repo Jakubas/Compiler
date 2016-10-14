@@ -1,6 +1,5 @@
 ### How to Build
 You need ocamlbuild, menhir, and make installed to build the compiler.
-
 <br />To build the compiler use the command:
 <br />make
 

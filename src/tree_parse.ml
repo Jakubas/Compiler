@@ -2,6 +2,8 @@ open Exp_lex
 open Lexing
 open Printf
 
+(* This file is used to parse a string into a AST *)
+
 let print_position lexbuf =
   let pos = lexbuf.lex_curr_p in
   eprintf "Pos %d:%d:%d\n" pos.pos_lnum pos.pos_bol pos.pos_cnum

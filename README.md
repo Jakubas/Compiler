@@ -1,11 +1,3 @@
-## Table of Contents
-
-## Download
-You can download the source code of the compiler from git.
-<br />The remote repository has the following address(s):
-<br />HTTPS: https://git.cs.bham.ac.uk/dxj452/Compiler.git
-<br />SSH: git@git.cs.bham.ac.uk:dxj452/Compiler.git
-
 ### How to Build
 You need ocamlbuild, menhir, and make installed to build the compiler.
 

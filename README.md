@@ -1,19 +1,21 @@
 ## Table of Contents
 
 ## Download
-You can download the source code of the compiler from github
-<br />the remote repository has the address:
-<br />
+You can download the source code of the compiler from git.
+<br />The remote repository has the following address(s):
+<br />HTTPS: https://git.cs.bham.ac.uk/dxj452/Compiler.git
+<br />SSH: git@git.cs.bham.ac.uk:dxj452/Compiler.git
 ### How to Build
 You need ocamlbuild and menhir installed to build the compiler.
 
 Run this command to build the compiler:
 <br />ocamlbuild -use-menhir ast.ml exp_lex.mll exp_par.mly
 
-The compiler should now be built.
-
 ### How to Test
-The test script code is contained in exp_test.ml
+The test script code is contained in exp_test.ml. The tests are in the /tests subdirectory.
+<br />To compile the test suite run the command:
+<br />ocamlbuild -Is tests/small_tests,tests/large_tests,tests -use-menhir -use-ocamlfind exp_test.native
+<br />You can run the test script with the following command: <br /> ./exp_test.native
 
 ## Language Syntax
 Each syntax construct is documented in the following way:

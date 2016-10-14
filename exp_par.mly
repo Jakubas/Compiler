@@ -61,7 +61,7 @@ top:
 funct:
   | x = ID; LPAREN; args = fun_args RPAREN; LBRACKET; e = exp; RBRACKET { (x,args,e) }
 
-fun_args: args = separated_list(COMMA, ID) { args } ;
+fun_args: args = separated_list(SEMICOLON, ID) { args } ;
 
 exp:
   | i = INT { Const(i) }

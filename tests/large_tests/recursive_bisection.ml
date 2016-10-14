@@ -4,7 +4,7 @@ open Printf
 
 let test = if
   parse_tree_of_string "
-  bisect (f, a, b, tol) {
+  bisect (f; a; b; tol) {
     int c = 0;
     int root = 0;
     if (b-a >= tol) {

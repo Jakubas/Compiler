@@ -88,9 +88,9 @@ Concrete Syntax: |
 <br /> Abstract Syntax: Or
 <br /> Example(s): x >= 2 | y <= 3
 
-Concrete Syntax: !
+Concrete Syntax: !e
 <br /> Abstract Syntax: Not
-<br /> Example(s): x ! 3
+<br /> Example(s): !x
 
 ### Expressions
 The concrete syntax in this section is derived from the expression type in the abstract syntax tree.
@@ -125,13 +125,18 @@ Concrete Syntax: e op e
 <br /> Abstract Syntax: Operator(op,e,e)
 <br /> Example(s): 1 + 3; -6 \* 5; x >= -6
 
+Concrete Syntax: op e
+<br /> Abstract Syntax: Negate(op,e)
+<br /> Example(s): !x; !m
+<br /> Comments: Not is the only accepted opcode for Negate.
+
 Concrete Syntax: e(e)
 <br /> Abstract Syntax: Application(e,e)
 <br /> Example(s): square(a;b)
 
 Concrete Syntax: 6
 <br /> Abstract Syntax: Const(i)
-<br /> Example(s): 5, 105, -542
+<br /> Example(s): 5; 105; -542
 
 Concrete Syntax: readInt()
 <br /> Abstract Syntax: ReadInt

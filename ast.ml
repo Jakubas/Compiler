@@ -9,6 +9,7 @@ type expression =
   | Asg of expression * expression (* e := e *)
   | Deref of expression (* !e *)
   | Operator of opcode * expression * expression (* e + e *)
+  | Negate of opcode * expression
   | Application of expression * expression (* e(e) *)
   | Const of int (* 7 *)
   | Readint (* read_int () *)
@@ -40,6 +41,7 @@ let rec string_of_exp exp = match exp with
   | Asg(e,f) -> "Asg (" ^ string_of_exp  e ^ ", " ^ string_of_exp  f ^ ")"
   | Deref (e) -> "Deref (" ^ string_of_exp  e ^ ")"
   | Operator (o,e,f) -> "Operator (" ^ string_of_opcode o ^ ", " ^ string_of_exp  e ^ ", " ^ string_of_exp  f ^ ")"
+  | Negate (o,e) -> "Negate (" ^ string_of_exp  e ^ ")"
   | Application (e,f) -> "Application (" ^ string_of_exp  e ^ ", " ^ string_of_exp  f ^ ")"
   | Const(i) -> "Const " ^ string_of_int i
   | Readint -> "Readint"

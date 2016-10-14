@@ -37,7 +37,6 @@ rule read =
  | '}' { RBRACKET }
  | '(' { LPAREN }
  | ')' { RPAREN }
- | ',' { COMMA }
  | identifier { ID (Lexing.lexeme lexbuf) }
  | eof { EOF }
  | _ { raise (SyntaxError ("Unexpected char: " ^

@@ -17,6 +17,7 @@ type expression =
   | Asg of expression * expression
   | Deref of expression
   | Operator of opcode * expression * expression
+  | Negate of opcode * expression
   | Application of expression * expression
   | Const of int
   | Readint

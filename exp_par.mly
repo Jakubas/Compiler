@@ -33,7 +33,6 @@ open Ast
 %token RBRACKET
 %token LPAREN
 %token RPAREN
-%token COMMA
 %token EOF
 
 %right SEMICOLON
@@ -66,9 +65,10 @@ fun_args: args = separated_list(SEMICOLON, ID) { args } ;
 exp:
   | i = INT { Const(i) }
   | MINUS; i = INT { Const(-i) }
+
   | e = exp; o = op; f = exp { Operator(o,e,f) }
 
-  | x = ID; { Deref(Identifier(x)) }
+  | x = ID {Deref(Identifier(x)) }
 
   | x = ID; ASG; f = exp { Asg(Identifier(x),f) }
   | x = ID; LPAREN; f = exp; RPAREN { Application(Identifier(x),f) }
@@ -84,6 +84,8 @@ exp:
   | FINAL; NEWINT; x = ID; ASG; e = exp; SEMICOLON; f = exp { Let(x,e,f) }
   | NEWINT; x = ID; ASG; e = exp; SEMICOLON; f = exp { New(x,e,f) }
 
+  | NOT; f = exp; {Negate(Ast.Not ,f)}
+
 %inline op:
   | PLUS { Plus }
   | MINUS { Minus }
@@ -95,4 +97,3 @@ exp:
   | EQUAL  { Equal }
   | AND  { And }
   | OR  { Or }
-  | NOT  { Not }

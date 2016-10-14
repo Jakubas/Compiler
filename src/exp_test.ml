@@ -41,7 +41,7 @@ parse_test (read_file "tests/small_tests/test_if_else.jk");
 parse_test (read_file "tests/small_tests/test_let.jk");
 parse_test (read_file "tests/small_tests/test_new.jk");
 parse_test (read_file "tests/small_tests/test_operator.jk");
-parse_test (read_file "tests/small_tests/test_other.jk");
+parse_test (read_file "tests/small_tests/test_negate.jk");
 parse_test (read_file "tests/small_tests/test_print_int.jk");
 parse_test (read_file "tests/small_tests/test_read_int.jk");
 parse_test (read_file "tests/small_tests/test_sequence.jk");

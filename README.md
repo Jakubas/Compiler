@@ -5,6 +5,7 @@ You can download the source code of the compiler from git.
 <br />The remote repository has the following address(s):
 <br />HTTPS: https://git.cs.bham.ac.uk/dxj452/Compiler.git
 <br />SSH: git@git.cs.bham.ac.uk:dxj452/Compiler.git
+
 ### How to Build
 You need ocamlbuild, menhir, and make installed to build the compiler.
 
@@ -17,6 +18,35 @@ The test script code is contained in exp_test.ml. The tests are in the /tests su
 <br />make test
 
 ## Language Syntax
+
+### Cheat Sheet
+| Syntax      | Meaning    |
+| ------------|:-------------:|
+| + | addition|
+| - | subtraction|
+| * | multiplication|
+| / | division |
+| <=| lesser than or equal|
+| >=| greater than or equal|
+| ==| equal|
+| !=| not equal|
+| &| logical and|
+| &#124; | logical or|
+| ! | not |
+| x=x+1;4+4 | sequence of expressions |
+| while (i >= 0) { i=i-1 } | while loop |
+| if (x == y) {x = x+1} else {y = y+1} | if else statement |
+| val = 5 | assignment of '5' to val |
+| x | dereferencing of 'x' |
+| 1*2 | opcode application |
+| square(a;b) | function application |
+| 6 | constant of int |
+| readInt() | read int from input |
+| printInt(3) | print '3' to output |
+| x = x+1 | assign right side of assignment to identifier x |
+| final int x = 6; | create a non-mutable 'x' |
+| int i = 0; | create a mutable 'i' |
+
 Each syntax construct is documented in the following way:
 <br />Concrete Syntax: the syntax of the construct
 <br />Abstract Syntax: The corresponding syntax from the abstract syntax tree
@@ -79,7 +109,7 @@ The concrete syntax in this section is derived from the expression type in the a
 
 Concrete Syntax: e;e
 <br /> Abstract Syntax: Seq(e,e)
-<br /> Example(s): x=x+1;return x
+<br /> Example(s): x=x+1;x+6
 
 Concrete Syntax: while (e) {e}
 <br /> Abstract Syntax: While(e,e)
@@ -87,16 +117,17 @@ Concrete Syntax: while (e) {e}
 
 Concrete Syntax: if (e) {e} else {e}
 <br /> Abstract Syntax: If(e,e,e)
-<br /> Example(s): if (x >= y) {x = x+1} else {return y}
+<br /> Example(s): if (x >= y) {x = x+1} else {y = y+1}
 
 Concrete Syntax: e = e
 <br /> Abstract Syntax: Asg(e,e)
 <br /> Example(s): val = 6
 
-Concrete Syntax: see comments
+Concrete Syntax: Identifier
 <br /> Abstract Syntax: Deref(e)
 <br /> Example(s): x
-<br /> Comments: Only indetifiers can be dereferenced. An indentifier is usually dereferenced without any special syntax needed except for when it is used as the indentifier on the left-most side of an Assignment, Application, Let, or New expression.
+<br /> Comments: Only indetifiers can be dereferenced. An indentifier is always dereferenced,
+except for when it is used on the left-most side of an Assignment, Application, Let, or New expression.
 
 Concrete Syntax: e op e
 <br /> Abstract Syntax: Operator(op,e,e)
@@ -141,31 +172,3 @@ Concrete Syntax: funName (stringArg1,stringArg2) {e}
 Concrete Syntax: fundef list
 <br /> Abstract Syntax: fundef list
 <br /> Example(s): main() { 1 } main2(c) { c + -6 }
-
-### Cheat Sheet
-| Syntax      | Meaning    |
-| ------------|:-------------:|
-| + | addition|
-| - | subtraction|
-| * | multiplication|
-| / | division |
-| <=| lesser than or equal|
-| >=| greater than or equal|
-| ==| equal|
-| !=| not equal|
-| &| logical and|
-| &#124; | logical or|
-| ! | not |
-| x=x+1;return x | sequence of expressions |
-| while (i > 0) { i=i-1 } | while loop |
-| if (x >= y) {x = x+1} else {return y} | if else statement |
-| val = 5 | assignment of '5' to val |
-| return x | dereferencing of 'x' |
-| 1*2 | operator application |
-| square(a;b) | function application |
-| 6 | constant of int |
-| readInt() | read int from input |
-| printInt(3) | print '3' to output |
-| x = x+1 | assign right side of assignment to identifier x |
-| final int x = 6; | create a non-mutable 'x' |
-| int i = 0; | create a mutable 'i' |

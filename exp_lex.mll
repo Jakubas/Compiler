@@ -29,8 +29,6 @@ rule read =
  | "if" { IF }
  | "else" { ELSE }
  | "=" { ASG }
- | "return" { RETURN }
- (* | application { APPLICATION } *)
  | "readInt" { READINT }
  | "printInt" { PRINTINT }
  | "final" { FINAL }

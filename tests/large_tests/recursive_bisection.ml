@@ -6,21 +6,22 @@ let test = if
   parse_tree_of_string "
   bisect (f, a, b, tol) {
     int c = 0;
+    int root = 0;
     if (b-a >= tol) {
       c = a+b;
       c = c/2;
       if (f(c) == 0) {
-        return c
+        root = c
       } else {
         if (f(c) <= -1 & f(a) <= -1 | f(c) >= 1 & f(a) >= 1) {
           a = c
         } else {
           b = c
         };
-        return bisect(f;a;b;tol)
+        root = bisect(f;a;b;tol)
       }
     } else {
-      return c
+      root = c
     }
   }
   " =

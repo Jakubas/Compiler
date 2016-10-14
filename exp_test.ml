@@ -2,8 +2,6 @@ open Exp_lex
 open Printf
 open Tree_parse;;
 
-(*print_parse_tree_of_string
-"";*)
 
 Test_application.test;
 Test_assignment.test;

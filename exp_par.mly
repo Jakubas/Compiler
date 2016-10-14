@@ -33,11 +33,9 @@ open Ast
 %token RBRACKET
 %token LPAREN
 %token RPAREN
-%token RETURN
 %token COMMA
 %token EOF
 
-%nonassoc RETURN
 %right SEMICOLON
 %nonassoc ASG
 
@@ -71,7 +69,6 @@ exp:
   | e = exp; o = op; f = exp { Operator(o,e,f) }
 
   | x = ID; { Deref(Identifier(x)) }
-  | RETURN; e = exp; { e }
 
   | x = ID; ASG; f = exp { Asg(Identifier(x),f) }
   | x = ID; LPAREN; f = exp; RPAREN { Application(Identifier(x),f) }

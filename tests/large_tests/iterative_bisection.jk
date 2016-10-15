@@ -1,3 +1,10 @@
+/* Checks if iterative bisection can be implemented syntactically in the
+language syntax
+
+The function's value is stored in root, f is the function to be applied,
+a is the min value, b is the max value, and tol is the tolerance for the root
+value
+*/
 bisect (f; a; b; tol) {
   int c = 0;
   int root = 0;
@@ -15,4 +22,5 @@ bisect (f; a; b; tol) {
     }
   };
   root = *c
+  *root
 }

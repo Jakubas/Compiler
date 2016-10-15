@@ -1,3 +1,6 @@
+/* this test checks the dereferencing syntax by creating two variables and
+dereferncing them
+*/
 main () {
   int x = 1;
   int y = 2;

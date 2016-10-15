@@ -1,3 +1,6 @@
+/* this test case checks the syntax of application
+test application of f(5)
+*/
 f (a) {
   f(5)
 }

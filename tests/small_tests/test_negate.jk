@@ -1,3 +1,4 @@
+/* check if the logical not opcode is working properly */
 main () {
-  !x == 5
+  !*x == 5
 }

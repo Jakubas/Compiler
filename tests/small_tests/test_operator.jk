@@ -1,3 +1,4 @@
+/* check if operators and all opcodes syntax is defined properly */
 main () {
   1 + 1 / *x * 5 - 6;
   *x <= 6;

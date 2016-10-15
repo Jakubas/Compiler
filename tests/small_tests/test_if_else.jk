@@ -1,3 +1,6 @@
+/* Check syntax of if statements 
+the program would check if the value of x is equal to 5 than print value of x,
+otherwise print 3 */
 main () {
   int x = 5;
   if (*x == 5) {

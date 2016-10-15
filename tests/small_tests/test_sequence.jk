@@ -1,3 +1,4 @@
+/* sequence some constants */
 main () {
   1;5;3;2
 }

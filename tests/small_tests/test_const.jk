@@ -1,3 +1,4 @@
+/* check constants */
 main () {
-  5 
+  5
 }

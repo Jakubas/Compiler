@@ -1,3 +1,5 @@
+/* check the syntax structure of while loops
+The code should keep on incrementing x until it is 7*/
 main () {
   int x = 0;
   while (x <= 6) {

@@ -1,3 +1,4 @@
+/* print a value of 12 */
 main () {
   printInt(6+6)
 }

@@ -7,11 +7,13 @@ let int = ['0'-'9']+
 let white = ' ' | '\t'
 let newline = '\r' | '\n' | "\r\n"
 let identifier = ['a'-'z' 'A'-'Z' '0'-'9']+
+let comment = '/''*' _* '*''/'
 
 rule read =
  parse
  | white { read lexbuf }
  | newline { read lexbuf }
+ | comment { read lexbuf }
  | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
  | '+' { PLUS }
  | '-' { MINUS }

@@ -1,3 +1,5 @@
+/* This test checks if you can reference a variable
+this program would create a new int and referenced it*/
 main () {
   int x = 5;
   x

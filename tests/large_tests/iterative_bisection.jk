@@ -1,18 +1,18 @@
 bisect (f; a; b; tol) {
   int c = 0;
   int root = 0;
-  while (b-a >= tol) {
-    c = a+b;
-    if (f(c) == 0) {
-    	c = c/2;
-    	root = c
+  while (*b - *a >= *tol) {
+    c = *a + *b;
+    if (f(*c) == 0) {
+    	c = *c / 2;
+    	root = *c
     } else {
-      if (f(c) <= -1 & f(a) <= -1 | f(c) >= 0 & f(a) >= 0) {
-        a = c
+      if (f(*c) <= -1 & f(*a) <= -1 | f(*c) >= 0 & f(*a) >= 0) {
+        a = *c
       } else {
-        b = c
+        b = *c
       }
     }
   };
-  root = c
+  root = *c
 }

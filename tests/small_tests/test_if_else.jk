@@ -1,1 +1,8 @@
-main () { if (x == 5) {5} else {3} }
+main () {
+  int x = 5;
+  if (*x == 5) {
+    printInt(*x)
+  } else {
+    printInt(3)
+  }
+}

@@ -1,1 +1,4 @@
-main () { x=5 }
+main () {
+  int x = 5;
+  x
+}

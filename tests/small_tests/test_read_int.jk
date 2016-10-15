@@ -1,1 +1,3 @@
-main () { readInt() }
+main () {
+  readInt()
+}

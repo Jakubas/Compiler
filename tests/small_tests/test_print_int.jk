@@ -1,1 +1,3 @@
-main () { printInt(6+6) }
+main () {
+  printInt(6+6)
+}

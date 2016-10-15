@@ -1,1 +1,6 @@
-main () { while (x >= 6) {x=x+1} }
+main () {
+  int x = 0;
+  while (x <= 6) {
+    x=x+1
+  }
+}

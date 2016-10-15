@@ -23,18 +23,19 @@ The test script code is contained in exp_test.ml. The tests are in the /tests su
 | !=| not equal|
 | &| logical and|
 | &#124; | logical or|
-| ! | not |
-| x=x+1;4+4 | sequence of expressions |
-| while (i >= 0) { i=i-1 } | while loop |
-| if (x == y) {x = x+1} else {y = y+1} | if else statement |
-| val = 5 | assignment of '5' to val |
-| x | dereferencing of 'x' |
-| 1*2 | opcode application |
+| ! | logical not |
+| \*x | dereferencing of identifier 'x' |
+| x  | identifer 'x' |
+| 1 / 2 | opcode application |
+| x = \*x + 1; 4 + 4 | sequence of expressions |
+| while (\*i >= 0) { i = \*i - 1 } | while loop |
+| if (x == y) {x = \*x + 1} else {y = \*y + 1} | if else statement |
+| val = 5 | assignment of '5' to identifier 'val' |
 | square(a;b) | function application |
 | 6 | constant of int |
 | readInt() | read int from input |
 | printInt(3) | print '3' to output |
-| x = x+1 | assign right side of assignment to identifier x |
+| x = \*x + 1 | assign right side of assignment to identifier 'x' |
 | final int x = 6; | create a non-mutable 'x' |
 | int i = 0; | create a mutable 'i' |
 
@@ -42,18 +43,17 @@ Each syntax construct is documented in the following way:
 <br />Concrete Syntax: the syntax of the construct
 <br />Abstract Syntax: The corresponding syntax from the abstract syntax tree
 <br />Example(s): One or more code snippets of the syntax
-<br />Comments: Some syntax has additional comments if required
 
 ### Opcodes
 The concrete syntax in this section is derived from the opcode type in the abstract syntax tree.
 
 Concrete Syntax: +
 <br /> Abstract Syntax: Plus
-<br /> Example(s): 1+1
+<br /> Example(s): 1 + 1
 
 Concrete Syntax: -
 <br /> Abstract Syntax: Minus
-<br /> Example(s): 2-5
+<br /> Example(s): 2 - 5
 
 Concrete Syntax: \*
 <br /> Abstract Syntax: Times
@@ -61,15 +61,15 @@ Concrete Syntax: \*
 
 Concrete Syntax: /
 <br /> Abstract Syntax: Divide
-<br /> Example(s): 6/y
+<br /> Example(s): 6 / \*y
 
 Concrete Syntax: <=
 <br /> Abstract Syntax: Leq
-<br /> Example(s): x<=5
+<br /> Example(s): \*x <= 5
 
 Concrete Syntax: >=
 <br /> Abstract Syntax: Geq
-<br /> Example(s): y>=k
+<br /> Example(s): \*y >= \*k
 
 Concrete Syntax: ==
 <br /> Abstract Syntax: Equal
@@ -77,19 +77,19 @@ Concrete Syntax: ==
 
 Concrete Syntax: !=
 <br /> Abstract Syntax: Noteq
-<br /> Example(s): 5 != x
+<br /> Example(s): 5 != \*x
 
 Concrete Syntax: &
 <br /> Abstract Syntax: And
-<br /> Example(s): x >= 5 & y <= 6
+<br /> Example(s): \*x >= 5 & \*y <= 6
 
 Concrete Syntax: |
 <br /> Abstract Syntax: Or
-<br /> Example(s): x >= 2 | y <= 3
+<br /> Example(s): \*x >= 2 | \*y <= 3
 
 Concrete Syntax: !e
 <br /> Abstract Syntax: Not
-<br /> Example(s): !x
+<br /> Example(s): !\*x == 5
 
 ### Expressions
 The concrete syntax in this section is derived from the expression type in the abstract syntax tree.
@@ -100,34 +100,31 @@ The concrete syntax in this section is derived from the expression type in the a
 
 Concrete Syntax: e;e
 <br /> Abstract Syntax: Seq(e,e)
-<br /> Example(s): x=x+1;x+6
+<br /> Example(s): x = \*x + 1; \*x + 6
 
 Concrete Syntax: while (e) {e}
 <br /> Abstract Syntax: While(e,e)
-<br /> Example(s): while (i > 0) { i=i-1 }
+<br /> Example(s): while (\*i > 0) { i = \*i - 1 }
 
 Concrete Syntax: if (e) {e} else {e}
 <br /> Abstract Syntax: If(e,e,e)
-<br /> Example(s): if (x >= y) {x = x+1} else {y = y+1}
+<br /> Example(s): if (\*x >= \*y) {x = \*x + 1} else {y = \*y + 1}
 
 Concrete Syntax: e = e
 <br /> Abstract Syntax: Asg(e,e)
 <br /> Example(s): val = 6
 
-Concrete Syntax: Identifier
+Concrete Syntax: \*e
 <br /> Abstract Syntax: Deref(e)
-<br /> Example(s): x
-<br /> Comments: Only indetifiers can be dereferenced. An indentifier is always dereferenced,
-except for when it is used on the left-most side of an Assignment, Application, Let, or New expression.
+<br /> Example(s): \*x
 
 Concrete Syntax: e op e
 <br /> Abstract Syntax: Operator(op,e,e)
-<br /> Example(s): 1 + 3; -6 \* 5; x >= -6
+<br /> Example(s): 1 + 3; -6 \* 5; \*x >= -6
 
 Concrete Syntax: op e
 <br /> Abstract Syntax: Negate(op,e)
 <br /> Example(s): !x; !m
-<br /> Comments: Not is the only accepted opcode for Negate.
 
 Concrete Syntax: e(e)
 <br /> Abstract Syntax: Application(e,e)
@@ -143,16 +140,15 @@ Concrete Syntax: readInt()
 
 Concrete Syntax: printInt(e)
 <br /> Abstract Syntax: Printint(e)
-<br /> Example(s): printInt (5)
+<br /> Example(s): printInt(5)
 
-Concrete Syntax: value
-<br /> Abstract Syntax: Identifier(str)
-<br /> Example(s): calculate(x;y), num = num + 6
-<br /> Comments: any string consisting of lowercase letters, uppercase letters, and numbers is a valid identifier. An identifier is always dereferenced unless it is used as the indentifier on the left-most side of an Assignment, Application, Let, or New expression.
+Concrete Syntax: x
+<br /> Abstract Syntax: Identifier(string)
+<br /> Example(s): cal; num;
 
 Concrete Syntax: final int e = e;
 <br /> Abstract Syntax: Let(str,e,e)
-<br /> Example(s): final int x = 6;
+<br /> Example(s): final int x = 6+6;
 
 Concrete Syntax: int e = e;
 <br /> Abstract Syntax: New(str,e,e)
@@ -162,9 +158,9 @@ Concrete Syntax: int e = e;
 
 Concrete Syntax: funName (stringArg1;stringArg2) {e}
 <br /> Abstract Syntax: string * string list * expression
-<br /> Example(s): add(a;b;c;d) { a+b+c+d }
+<br /> Example(s): add(a;b;c;d) { \*a + \*b + \*c + \*d }
 
 ### Program
 Concrete Syntax: fundef list
 <br /> Abstract Syntax: fundef list
-<br /> Example(s): main() { 1 } main2(c) { c + -6 }
+<br /> Example(s): main() { 1 } main2(c) { \*c + -6 }

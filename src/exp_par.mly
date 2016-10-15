@@ -5,7 +5,7 @@ open Ast
 /* Operators */
 %token PLUS
 %token MINUS
-%token TIMES
+%token ASTERIX
 %token DIVIDE
 %token LEQ
 %token GEQ
@@ -36,20 +36,18 @@ open Ast
 %token EOF
 
 %right SEMICOLON
+%nonassoc LPAREN
 %nonassoc ASG
 
+%right NOT
 %left OR
 %left AND
-%left EQUAL
-%left NOTEQ
-%left LEQ
-%left GEQ
-%left PLUS
-%left MINUS
-%left TIMES
-%left DIVIDE
-%right NOT
 
+%left EQUAL, NOTEQ
+%left LEQ, GEQ
+
+%left PLUS, MINUS
+%left ASTERIX, DIVIDE
 %start <Ast.program> top
 %%
 
@@ -65,31 +63,25 @@ fun_args: args = separated_list(SEMICOLON, ID) { args } ;
 exp:
   | i = INT { Const(i) }
   | MINUS; i = INT { Const(-i) }
-
+  | x = ID; {(Identifier(x))}
+  | ASTERIX; x = ID; {Deref(Identifier(x))}
   | e = exp; o = op; f = exp { Operator(o,e,f) }
-
-  | x = ID {Deref(Identifier(x)) }
-
-  | x = ID; ASG; f = exp { Asg(Identifier(x),f) }
-  | x = ID; LPAREN; f = exp; RPAREN { Application(Identifier(x),f) }
+  | e = exp; ASG; f = exp { Asg(e,f) }
+  | e = exp; LPAREN; f = exp; RPAREN { Application(e,f) }
   | e = exp; SEMICOLON; f = exp { Seq(e,f) }
-
   | WHILE; LPAREN; e = exp; RPAREN; LBRACKET; f = exp; RBRACKET { While(e,f) }
   | IF LPAREN; e = exp; RPAREN; LBRACKET f = exp; RBRACKET;
     ELSE; LBRACKET; g = exp; RBRACKET { If(e,f,g) }
-
   | PRINTINT; LPAREN; e = exp; RPAREN { Printint(e) }
   | READINT; LPAREN; RPAREN { Readint }
-
   | FINAL; NEWINT; x = ID; ASG; e = exp; SEMICOLON; f = exp { Let(x,e,f) }
   | NEWINT; x = ID; ASG; e = exp; SEMICOLON; f = exp { New(x,e,f) }
-
-  | NOT; f = exp; {Negate(Ast.Not ,f)}
+  | NOT; f = exp; {Negate(Ast.Not,f)}
 
 %inline op:
   | PLUS { Plus }
   | MINUS { Minus }
-  | TIMES { Times }
+  | ASTERIX { Times }
   | DIVIDE { Divide }
   | LEQ { Leq }
   | GEQ { Geq }

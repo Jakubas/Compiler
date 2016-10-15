@@ -15,7 +15,7 @@ rule read =
  | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
  | '+' { PLUS }
  | '-' { MINUS }
- | '*' { TIMES }
+ | '*' { ASTERIX }
  | '/' { DIVIDE }
  | "<=" { LEQ }
  | ">=" { GEQ }

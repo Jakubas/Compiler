@@ -160,7 +160,7 @@ Concrete Syntax: int e = e;
 
 ### Fundef
 
-Concrete Syntax: funName (stringArg1,stringArg2) {e}
+Concrete Syntax: funName (stringArg1;stringArg2) {e}
 <br /> Abstract Syntax: string * string list * expression
 <br /> Example(s): add(a;b;c;d) { a+b+c+d }
 

@@ -29,7 +29,7 @@ The test script code is contained in exp_test.ml. The tests are in the /tests su
 | 1 / 2 | opcode application |
 | x = \*x + 1; 4 + 4 | sequence of expressions |
 | while (\*i >= 0) { i = \*i - 1 } | while loop |
-| if (x == y) {x = \*x + 1} else {y = \*y + 1} | if else statement |
+| if (\*x == \*y) {x = \*x + 1} else {y = \*y + 1} | if else statement |
 | val = 5 | assignment of '5' to identifier 'val' |
 | square(a;b) | function application |
 | 6 | constant of int |
@@ -104,7 +104,7 @@ Concrete Syntax: e;e
 
 Concrete Syntax: while (e) {e}
 <br /> Abstract Syntax: While(e,e)
-<br /> Example(s): while (\*i > 0) { i = \*i - 1 }
+<br /> Example(s): while (\*i >= 0) { i = \*i - 1 }
 
 Concrete Syntax: if (e) {e} else {e}
 <br /> Abstract Syntax: If(e,e,e)
@@ -148,7 +148,7 @@ Concrete Syntax: x
 
 Concrete Syntax: final int e = e;
 <br /> Abstract Syntax: Let(str,e,e)
-<br /> Example(s): final int x = 6+6;
+<br /> Example(s): final int x = 6 + 6;
 
 Concrete Syntax: int e = e;
 <br /> Abstract Syntax: New(str,e,e)

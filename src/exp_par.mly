@@ -64,7 +64,8 @@ exp:
   | i = INT { Const(i) }
   | MINUS; i = INT { Const(-i) }
   | x = ID; {(Identifier(x))}
-  | ASTERIX; x = ID; {Deref(Identifier(x))}
+  (*| ASTERIX; x = ID; {Deref(Identifier(x))}*)
+  | ASTERIX; e = exp; {Deref(e)}
   | e = exp; o = op; f = exp { Operator(o,e,f) }
   | e = exp; ASG; f = exp { Asg(e,f) }
   | e = exp; LPAREN; f = exp; RPAREN { Application(e,f) }

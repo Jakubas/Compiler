@@ -4,19 +4,19 @@ type opcode =
   | And | Or | Not
 type expression =
   | Seq of expression * expression (* e; e *)
-  | While of expression * expression (* while e do e *)
-  | If of expression * expression * expression (* if e do e else e *)
-  | Asg of expression * expression (* e := e *)
-  | Deref of expression (* !e *)
+  | While of expression * expression (* while (e) {e} *)
+  | If of expression * expression * expression (* if (e) {e} else {e} *)
+  | Asg of expression * expression (* e = e *)
+  | Deref of expression (* *e *)
   | Operator of opcode * expression * expression (* e + e *)
-  | Negate of opcode * expression
+  | Negate of opcode * expression (* !e *)
   | Application of expression * expression (* e(e) *)
   | Const of int (* 7 *)
-  | Readint (* read_int () *)
-  | Printint of expression (* print_int (e) *)
+  | Readint (* readInt() *)
+  | Printint of expression (* printInt (e) *)
   | Identifier of string (* x *)
-  | Let of string * expression * expression (* let x = e in e *)
-  | New of string * expression * expression (* new x = e in e *)
+  | Let of string * expression * expression (* int x = e; e *)
+  | New of string * expression * expression (* final int x = e; e *)
 type fundef = string * string list * expression
 type program = fundef list
 
@@ -33,7 +33,6 @@ let string_of_opcode op = match op with
  | Or -> "Or"
  | Not -> "Not"
 
-(* Generates a parse tree from an expression *)
 let rec string_of_exp exp = match exp with
   | Seq(e,f) -> "Seq(" ^ string_of_exp  e ^ "," ^ string_of_exp  f ^ ")"
   | While (e,f) -> "While (" ^ string_of_exp  e ^ ", " ^ string_of_exp  f ^ ")"
@@ -58,4 +57,5 @@ let rec string_of_program2 prog = match prog with
   | x::[] -> "(" ^ string_of_fundef x ^ ")]"
   | x::xs -> "(" ^ string_of_fundef x ^ ")," ^ string_of_program2 xs
 
+(* Generates a parse tree from a prgroam*)
 let string_of_program prog = "[" ^ string_of_program2 prog;;

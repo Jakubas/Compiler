@@ -1,6 +1,7 @@
 open Exp_lex
 open Lexing
 open Printf
+open Tree_parse
 
 let get_position lexbuf =
   let pos = lexbuf.lex_curr_p in

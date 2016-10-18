@@ -1,11 +1,15 @@
-/* Check syntax of if statements 
-the program would check if the value of x is equal to 5 than print value of x,
-otherwise print 3 */
+/*
+Check syntax of if statements
+the program will check if the value of x is equal to 5, if it is
+then the result is value of (x + y), otherwise the result is value of y
+Value: 8
+*/
 main () {
-  int x = 5;
+  x = 5;
+  y = 3;
   if (*x == 5) {
-    printInt(*x)
+    *x + *y
   } else {
-    printInt(3)
+    *y
   }
 }

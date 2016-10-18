@@ -1,5 +1,5 @@
 /* Check the syntax of the new construct
-the program would create a new mutable variable x and square it */
+the program will create a new mutable variable x and square it */
 main () {
   int x = 2;
   x = *x * *x

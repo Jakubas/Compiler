@@ -1,5 +1,7 @@
-/* this test case will fail because there are no parenthesis
-around the conditional expression '*x != 5'  */
+/*
+This test case will fail because there are no parenthesis
+around the conditional expression '*x != 5'
+*/
 main () {
   if *x != 5 {
     x = *x + 1;

@@ -20,7 +20,7 @@ bisect (f; a; b; tol) {
         b = *c
       }
     }
-  };
-  root = *c
+  }
+  root = *c;
   *root
 }

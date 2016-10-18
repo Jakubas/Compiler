@@ -1,4 +1,5 @@
-/* print a value of 12 */
+/* this test case checks if printInt(6+6) is valid syntax
+the program will print a value of 12 */
 main () {
-  printInt(6+6)
+  printInt(6 + 6)
 }

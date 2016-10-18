@@ -1,8 +1,12 @@
-/* check the syntax structure of while loops
-The code should keep on incrementing x until it is 7*/
+/*
+Check the syntax structure of while loops
+The code should keep on incrementing the value of x until it is 7
+Value: 7
+*/
 main () {
-  int x = 0;
-  while (x <= 6) {
-    x=x+1
+  x = -10;
+  while (*x <= 6) {
+    x = *x+1
   }
+  *x
 }

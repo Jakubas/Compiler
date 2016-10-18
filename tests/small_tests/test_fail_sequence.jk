@@ -1,5 +1,7 @@
-/* this test case will fail because ',' is the incorrect syntax for sequences.
-The correct syntax is ';' */
+/*
+This test case will fail because ',' is the incorrect syntax for sequences.
+The correct syntax is ';'
+*/
 main () {
   1 + 1,5 * 5
 }

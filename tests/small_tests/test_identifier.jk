@@ -1,6 +1,10 @@
-/* This test checks if you can reference a variable
-this program would create a new int and referenced it*/
+/*
+This test checks if you can reference a variable
+This program creates a new int and references it on the left hand side of an
+assignment expression
+Value: 5
+*/
 main () {
-  int x = 5;
-  x
+  x = -5;
+  x = *x * *x / 5
 }

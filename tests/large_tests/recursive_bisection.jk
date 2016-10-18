@@ -14,14 +14,16 @@ bisect (f; a; b; tol) {
     if (f(c) == 0) {
       root = *c
     } else {
+      root = bisect(*f;*a;*b;*tol);
       if (f(*c) <= -1 & f(*a) <= -1 | f(*c) >= 1 & f(*a) >= 1) {
         a = *c
       } else {
         b = *c
-      };
+      }
       root = bisect(*f;*a;*b;*tol)
     }
   } else {
-    root = *c
+    root = *c;
+    *root
   }
 }

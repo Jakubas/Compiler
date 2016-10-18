@@ -1,4 +1,7 @@
-/* check constants */
+/*
+Check constants
+Value: 5
+*/
 main () {
   5
 }

@@ -1,5 +1,5 @@
 /* This test case checks if the syntax for let constructs is defined properly
-the program would create a non mutable variable x and dereference it*/
+the program will create a non mutable variable x and dereference it*/
 main () {
   final int x = 5;
   *x

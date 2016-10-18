@@ -36,7 +36,7 @@ open Ast
 %token EOF
 
 %right SEMICOLON
-%nonassoc LPAREN
+%nonassoc RBRACKET
 %nonassoc ASG
 
 %right NOT
@@ -48,6 +48,7 @@ open Ast
 
 %left PLUS, MINUS
 %left ASTERIX, DIVIDE
+%nonassoc LPAREN
 %start <Ast.program> top
 %%
 
@@ -71,8 +72,12 @@ exp:
   | e = exp; LPAREN; f = exp; RPAREN { Application(e,f) }
   | e = exp; SEMICOLON; f = exp { Seq(e,f) }
   | WHILE; LPAREN; e = exp; RPAREN; LBRACKET; f = exp; RBRACKET { While(e,f) }
+  | WHILE; LPAREN; e = exp; RPAREN; LBRACKET; f = exp; RBRACKET;
+    g = exp { Seq(While(e,f),g) }
   | IF LPAREN; e = exp; RPAREN; LBRACKET f = exp; RBRACKET;
     ELSE; LBRACKET; g = exp; RBRACKET { If(e,f,g) }
+  | IF LPAREN; e = exp; RPAREN; LBRACKET f = exp; RBRACKET;
+    ELSE; LBRACKET; g = exp; RBRACKET; h = exp { Seq(If(e,f,g),h) }
   | PRINTINT; LPAREN; e = exp; RPAREN { Printint(e) }
   | READINT; LPAREN; RPAREN { Readint }
   | FINAL; NEWINT; x = ID; ASG; e = exp; SEMICOLON; f = exp { Let(x,e,f) }

@@ -2,7 +2,7 @@
 This function evaluates to an int
 Value: 100
 */
-number() {
+main() {
   x = 0;
   x = *x + 1;
   x = *x * 6 / 2;

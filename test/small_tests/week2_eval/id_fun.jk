@@ -3,7 +3,7 @@ This function evaluates to an identifier
 Value: y
 */
 
-xOry() {
+main() {
   if (0 == 0) {
     y;
   } else {

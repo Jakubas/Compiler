@@ -1,7 +1,7 @@
 /* A function contaiting nested ifs
 Value: 3
 */
-nestedIfs () {
+main() {
   result = 0;
 
   if (5 == 5) {

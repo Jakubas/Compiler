@@ -1,4 +1,4 @@
 /* Will fail caused by division by zero */
-divide() {
+main() {
   6/0;
 }

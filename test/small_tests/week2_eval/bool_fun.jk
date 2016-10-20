@@ -3,7 +3,7 @@ This function evaluates to a boolean value.
 Value: true
 */
 
-isSomething() {
+main() {
   x = 1;
   y = 2;
   if (*x >= *y) {

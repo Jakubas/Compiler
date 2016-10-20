@@ -2,7 +2,7 @@
 This function does a couple logical operations
 Value: true
 */
-logicalOperations () {
+main() {
   x = 0;
   y = 10;
   *x == 10;

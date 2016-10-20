@@ -2,7 +2,7 @@
 This program has a value/type mismatch in the if statement because 'x = y' is
 not a logical expression
 */
-m() {
+main() {
   x = 0;
   y = 1;
   if (x = y) {

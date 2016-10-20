@@ -2,7 +2,7 @@
 Assigns some values and then perform operations on them
 Value: 2
 */
-assignments () {
+main() {
   a = 0;
   b = 1;
   c = 4;

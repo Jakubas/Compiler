@@ -75,9 +75,9 @@ and eval_opcode op e1 e2 = match op with
   | _ -> raise (RuntimeError ("RuntimeError: '" ^ string_of_opcode op ^ "' is not a binary operator"))
 
 let eval_fun = function
-  | (name, _, exp) -> eval_exp exp
+  | (name,_, exp) -> eval_exp exp
 
 let rec eval_prog = function
-  | [] -> raise (RuntimeError "RuntimeError: no functions defined")
-  | x::[] -> eval_fun x
-  | x::xs -> let _ = eval_fun x in eval_prog xs
+  | [] -> raise (RuntimeError "RuntimeError: no main function defined")
+  | ("main",_, exp) as x::xs -> eval_fun x
+  | x::xs -> eval_prog xs

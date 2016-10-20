@@ -2,7 +2,7 @@
 Sequences of operations
 Value: -4
 */
-operationSequences() {
+main() {
   5 + 5;
   6 / 6 * 2;
   3 == 5;

@@ -7,7 +7,9 @@ let int = ['0'-'9']+
 let white = ' ' | '\t'
 let newline = '\r' | '\n' | "\r\n"
 let identifier = ['a'-'z' 'A'-'Z' '0'-'9']+
-let comment = '/''*' _* '*''/'
+let comment = "/*" _* "*/"
+let comment = "/*" ([^'*'] | '*'[^'/'])* "*/"
+let closingBracket = "};" | ';' white* '}' | '}'
 
 rule read =
  parse
@@ -36,7 +38,7 @@ rule read =
  | "final" { FINAL }
  | "int" { NEWINT }
  | '{' { LBRACKET }
- | '}' { RBRACKET }
+ | closingBracket { RBRACKET }
  | '(' { LPAREN }
  | ')' { RPAREN }
  | identifier { ID (Lexing.lexeme lexbuf) }

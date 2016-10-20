@@ -49,6 +49,7 @@ open Ast
 %left PLUS, MINUS
 %left ASTERIX, DIVIDE
 %nonassoc LPAREN
+
 %start <Ast.program> top
 %%
 
@@ -65,7 +66,6 @@ exp:
   | i = INT { Const(i) }
   | MINUS; i = INT { Const(-i) }
   | x = ID; {(Identifier(x))}
-  (*| ASTERIX; x = ID; {Deref(Identifier(x))}*)
   | ASTERIX; e = exp; {Deref(e)}
   | e = exp; o = op; f = exp { Operator(o,e,f) }
   | e = exp; ASG; f = exp { Asg(e,f) }
@@ -95,3 +95,4 @@ exp:
   | EQUAL  { Equal }
   | AND  { And }
   | OR  { Or }
+  | NOT { Not }

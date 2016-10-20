@@ -3,10 +3,10 @@ Check the syntax structure of while loops
 The code should keep on incrementing the value of x until it is 7
 Value: 7
 */
-main () {
+main() {
   x = -10;
   while (*x <= 6) {
-    x = *x+1
+    x = *x+1;
   }
-  *x
+  *x;
 }

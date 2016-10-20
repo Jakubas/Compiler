@@ -3,8 +3,9 @@ This test checks the dereferencing syntax by creating two variables and
 dereferncing them
 Value: 2
 */
-main () {
+main() {
   x = 1;
   y = 2;
-  *x; *y
+  *x;
+  *y;
 }

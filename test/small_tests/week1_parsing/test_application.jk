@@ -3,5 +3,5 @@ This test case checks the syntax of application
 Test application of f(5)
 */
 f(a) {
-  f(5)
+  f(5);
 }

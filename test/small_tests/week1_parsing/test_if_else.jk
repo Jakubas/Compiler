@@ -4,12 +4,12 @@ the program will check if the value of x is equal to 5, if it is
 then the result is value of (x + y), otherwise the result is value of y
 Value: 8
 */
-main () {
+main() {
   x = 5;
   y = 3;
   if (*x == 5) {
-    *x + *y
+    *x + *y;
   } else {
-    *y
+    *y;
   }
 }

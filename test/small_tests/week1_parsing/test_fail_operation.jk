@@ -1,6 +1,6 @@
 /*
 This test case will fail because the + operation is not unary
 */
-main () {
-  +1
+main() {
+  +1;
 }

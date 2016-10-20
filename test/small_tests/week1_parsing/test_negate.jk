@@ -3,7 +3,7 @@ Check if the logical not opcode is working properly
 Value: false
 */
 
-main () {
+main() {
   x = 5;
-  !*x == 5
+  !*x == 5;
 }

@@ -1,5 +1,5 @@
 /* check the syntax of readInt
 the program read the next int from standard input */
-main () {
-  readInt()
+main() {
+  readInt();
 }

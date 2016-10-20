@@ -57,7 +57,7 @@ and eval_opcode op e1 e2 = match op with
   | Plus   -> Int' (value_to_int (eval_exp e1) + value_to_int (eval_exp e2))
   | Minus  -> Int' (value_to_int (eval_exp e1) - value_to_int (eval_exp e2))
   | Divide -> (try Int' (value_to_int (eval_exp e1) / value_to_int (eval_exp e2))
-              with Division_by_zero -> raise (RuntimeError ("RuntimeError: Division by zero")))
+              with Division_by_zero -> raise (RuntimeError ("RuntimeError: division by zero")))
   | Leq    -> if value_to_int (eval_exp e1) <= value_to_int (eval_exp e2)
               then Bool' true else Bool' false
   | Geq    -> if value_to_int (eval_exp e1) >= value_to_int (eval_exp e2)

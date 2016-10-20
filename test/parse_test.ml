@@ -1,15 +1,15 @@
-open Exp_lex
+open Lex
 open Test
 open Lexing
 open Printf
 
 let parse_with_error_as_string lexbuf =
   try
-    let _ = Exp_par.top Exp_lex.read lexbuf in "pass\n"
+    let _ = Par.top Lex.read lexbuf in "\x1b[32mpass"
   with
-    | SyntaxError msg -> msg ^ ": " ^ position lexbuf
-    | Exp_par.Error ->   "Parse error: " ^ position lexbuf
-    | _ -> "Unhandled error\n"
+    | SyntaxError msg -> "\x1b[31m" ^ msg ^ ": " ^ position lexbuf
+    | Par.Error ->   "\x1b[31m" ^ "Parse error: " ^ position lexbuf
+    | _ -> "\x1b[31m" ^ "Unhandled error"
 
 let parse_test str =
   let lex = Lexing.from_string str in
@@ -18,7 +18,8 @@ let parse_test str =
 let rec batch_test files acc = match files with
   | []    -> print_string acc
   | x::xs ->
-    let str = x ^ ": " ^ parse_test (read_file x) in batch_test xs (acc ^ str)
+    let str =
+    sprintf "\x1b[37m%s\n%s\n" x (parse_test (read_file x)) in batch_test xs (acc ^ str)
 
 let test_files = [
   (*Small test cases *)

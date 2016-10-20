@@ -1,0 +1,6 @@
+/* This program will cause a stack overflow */
+stackOverflow() {
+  while (1 == 1) {
+    x = 1 + 1;
+  }
+}

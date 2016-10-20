@@ -1,0 +1,4 @@
+/* Will fail caused by division by zero */
+divide() {
+  6/0;
+}

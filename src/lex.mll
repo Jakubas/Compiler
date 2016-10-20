@@ -1,5 +1,5 @@
 {
-open Exp_par
+open Par
 exception SyntaxError of string
 }
 

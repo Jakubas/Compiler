@@ -1,4 +1,4 @@
-open Exp_lex
+open Lex
 open Prog_eval
 open Test
 open Lexing
@@ -10,19 +10,19 @@ let eval_test str expected_value =
     let parsed = parse lexbuf in
     let value = eval_prog parsed in
     if value = expected_value
-      then "pass"
-      else "fail: evaluated to: " ^ (string_of_value value) ^ ", should evaluate to: " ^ (string_of_value expected_value)
+      then "\x1b[32mpass, evaluated to: " ^ (string_of_value value)
+      else "\x1b[31mfail, evaluated to: " ^ (string_of_value value) ^ ", should evaluate to: " ^ (string_of_value expected_value)
   with
-  | SyntaxError msg -> msg ^ ": " ^ position lexbuf
-  | Exp_par.Error ->   "Parse error: " ^ position lexbuf
-  | RuntimeError msg -> msg
-  | Stack_overflow -> "Stack_overflow"
+  | SyntaxError msg -> "\x1b[31m" ^ msg ^ ": " ^ position lexbuf
+  | Par.Error ->   "\x1b[31m" ^ "Parse error: " ^ position lexbuf
+  | RuntimeError msg -> "\x1b[31m" ^ msg
+  | Stack_overflow -> "\x1b[31mstack overflow"
 
 let rec batch_test files acc = match files with
   | [] -> print_string acc
   | (file_path, expected_value)::xs ->
     let result = eval_test (read_file file_path) expected_value in
-    let str = file_path ^ ": " ^ result ^ "\n" in batch_test xs (acc ^ str)
+    let str = sprintf "\x1b[37m%s\n%s\n" file_path result in batch_test xs (acc ^ str)
 
 (* tuples of (file_path, expected value) *)
 let test_files = [
@@ -47,10 +47,12 @@ let test_files = [
   ("test/small_tests/week2_eval/operation_seqs.jk", Int' (-4));
   ("test/small_tests/week2_eval/two_functions.jk", Int' 1);
   ("test/small_tests/week2_eval/while_ifs.jk", Int' 17);
-  ("test/large_tests/week2_eval/fibonacci_sum.jk", Int' 64);
-  ("test/large_tests/week2_eval/fibonacci.jk", Int' 610);
   (* Large test cases *)
+  ("test/large_tests/week2_eval/fibonacci.jk", Int' 610);
   (* These tests should fail *)
+  ("test/small_tests/week2_eval/fail_stackoverflow.jk", Int' 1);
+  ("test/small_tests/week2_eval/fail_division_by_zero.jk", Int' 1);
+  ("test/small_tests/week2_eval/fail_value_type.jk", Bool' true);
 ];;
 
 

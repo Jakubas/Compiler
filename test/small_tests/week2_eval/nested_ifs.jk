@@ -1,0 +1,25 @@
+/* A function contaiting nested ifs
+Value: 3
+*/
+nestedIfs () {
+  result = 0;
+
+  if (5 == 5) {
+    if (3 != 5) {
+      if (3 >= 5) {
+        if (6 <= 5) {
+          result = 4;
+        } else {
+          result = 5;
+        }
+      } else {
+       result = 3;
+      }
+    } else {
+      result = 2;
+    }
+  } else {
+    result = 1;
+  }
+  *result
+}

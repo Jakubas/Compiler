@@ -1,0 +1,16 @@
+/*
+This function does a couple logical operations
+Value: true
+*/
+logicalOperations () {
+  x = 0;
+  y = 10;
+  *x == 10;
+  6 == 5;
+  *x >= 6;
+  7 <= 7;
+  *y >= 4 & 2 <= 3;
+  5 >= *y | *y != *x;
+  /* first calculate value of *x == *y, than apply the ! (not) operator */
+  !*x == *y;
+}

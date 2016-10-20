@@ -1,0 +1,19 @@
+/*
+This function consists of nested while loops, it manipulates the variable x
+with these loops
+Value: 1003772
+*/
+
+whiles() {
+  x = 0;
+  while (*x <= 1000000) {
+    while(*x <= 1000) {
+      while (*x <= 10) {
+        x = *x + 2;
+      }
+        x = *x + 6;
+    }
+    x = *x + 6730
+  }
+  *x
+}

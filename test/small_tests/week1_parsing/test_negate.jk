@@ -1,6 +1,6 @@
 /*
 Check if the logical not opcode is working properly
-Value: 0
+Value: false
 */
 
 main () {

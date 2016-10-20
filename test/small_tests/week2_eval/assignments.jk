@@ -1,0 +1,12 @@
+/*
+Assigns some values and then perform operations on them
+Value: 2
+*/
+assignments () {
+  a = 0;
+  b = 1;
+  c = 4;
+  d = 2;
+  e = *a * *b + *c / *d;
+  *e;
+}

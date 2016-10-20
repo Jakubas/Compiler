@@ -1,0 +1,13 @@
+/*
+This function evaluates to an int
+Value: 100
+*/
+number() {
+  x = 0;
+  x = *x + 1;
+  x = *x * 6 / 2;
+  y = 10;
+  x = *x * *y;
+  x = *x * *x;
+  x = 90000 / *x;
+}

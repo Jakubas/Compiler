@@ -1,0 +1,13 @@
+/*
+Sequences of operations
+Value: -4
+*/
+operationSequences() {
+  5 + 5;
+  6 / 6 * 2;
+  3 == 5;
+  x = 1;
+  *x * 4 + *x * *x / 3 - 6 - *x;
+  6 - 6;
+  6 * 2 / -3;
+}

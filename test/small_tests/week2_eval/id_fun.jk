@@ -1,0 +1,12 @@
+/*
+This function evaluates to an identifier
+Value: y
+*/
+
+xOry() {
+  if (0 == 0) {
+    y;
+  } else {
+    x;
+  }
+}

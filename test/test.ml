@@ -35,5 +35,5 @@ let parse lexbuf = Par.top Lex.read lexbuf
 
 let string_of_value = function
   | Int' i  -> string_of_int i
-  | Id' x   -> x
+  | Id' x   -> "'" ^ x ^ "'"
   | Bool' b -> if (b) then "true" else "false"

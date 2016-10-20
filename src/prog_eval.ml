@@ -42,7 +42,8 @@ let rec eval_exp = function
   | Deref (e1) ->
     let v1 = eval_exp e1 in
     let x = value_to_string v1 in
-    Int' (Hashtbl.find store x)
+    (try Int' (Hashtbl.find store x)
+    with Not_found -> raise (RuntimeError ("RuntimeError: '" ^ x ^ "' has no value assigned to it")))
   | Operator (op,e1,e2) -> eval_opcode op e1 e2
   | Negate (op,e1) -> (match op with
     | Not ->

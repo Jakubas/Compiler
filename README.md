@@ -4,9 +4,13 @@ You need ocamlbuild, menhir, and make installed to build the compiler.
 <br />make
 
 ### How to Test
-The test script code is contained in exp_test.ml. The tests are in the /tests subdirectory.
-<br />To compile and run the test suite run the command:
-<br />make test
+The test script code is contained in eval_test.ml and parse_test.ml.
+<br />The test cases are in the subdirectories of the /test directory.
+
+<br />To compile and run the eval tests run the command:
+<br />make testeval
+<br />To compile and run the parser tests run the command:
+<br />make testparser
 
 ## Language Syntax
 
@@ -39,6 +43,35 @@ The test script code is contained in exp_test.ml. The tests are in the /tests su
 | final int x = 6; | create a non-mutable 'x' |
 | int i = 0; | create a mutable 'i' |
 
+
+Extra Notes:
+< br />Semicolons after and before right brackets ('}') can be omitted or included.
+< br />So these three examples are parsed the same:
+```
+example1() {
+  x = 0;
+  while (*x <= 1) {
+    x = 5;
+  }
+  5;
+}
+
+example2() {
+  x = 0;
+  while (*x <= 1) {
+    x = 5;
+  };
+  5
+}
+
+example3() {
+  x = 0;
+  while (*x <= 1) {
+    x = 5;
+  };
+  5;
+}
+```
 Each syntax construct is documented in the following way:
 <br />Concrete Syntax: the syntax of the construct
 <br />Abstract Syntax: The corresponding syntax from the abstract syntax tree

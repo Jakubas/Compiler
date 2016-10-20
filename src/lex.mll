@@ -9,7 +9,7 @@ let newline = '\r' | '\n' | "\r\n"
 let identifier = ['a'-'z' 'A'-'Z' '0'-'9']+
 let comment = "/*" _* "*/"
 let comment = "/*" ([^'*'] | '*'[^'/'])* "*/"
-let closingBracket = "};" | ';' white* '}' | '}'
+let closingBracket = ';' white* '}' white* ';' | '}' white* ';' | ';' white* '}' | '}'
 
 rule read =
  parse

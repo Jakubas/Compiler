@@ -51,6 +51,7 @@ let rec eval_exp = function
       let b1 = value_to_bool v1 in
       if (b1) then Bool' false else Bool' true
     | _ -> raise (RuntimeError ("RuntimeError: '" ^ string_of_opcode op ^ "' is not a unary operator")))
+
   | Identifier x -> Id' x
   | e -> raise (RuntimeError ("RuntimeError: evaluating: '" ^ string_of_exp e ^ "' is not implemented"))
 

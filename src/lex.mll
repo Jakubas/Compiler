@@ -35,7 +35,7 @@ rule read =
  | "=" { ASG }
  | "readInt" { READINT }
  | "printInt" { PRINTINT }
- | "final" { FINAL }
+ | "let" { LET }
  | "int" { NEWINT }
  | '{' { LBRACKET }
  | closingBracket { RBRACKET }

@@ -25,7 +25,7 @@ open Ast
 %token ASG
 %token READINT
 %token PRINTINT
-%token FINAL
+%token LET
 %token NEWINT
 
 /* Other */
@@ -80,7 +80,7 @@ exp:
     ELSE; LBRACKET; g = exp; RBRACKET; h = exp { Seq(If(e,f,g),h) }
   | PRINTINT; LPAREN; e = exp; RPAREN { Printint(e) }
   | READINT; LPAREN; RPAREN { Readint }
-  | FINAL; NEWINT; x = ID; ASG; e = exp; SEMICOLON; f = exp { Let(x,e,f) }
+  | LET; NEWINT; x = ID; ASG; e = exp; SEMICOLON; f = exp { Let(x,e,f) }
   | NEWINT; x = ID; ASG; e = exp; SEMICOLON; f = exp { New(x,e,f) }
   | NOT; f = exp; {Negate(Ast.Not,f)}
 

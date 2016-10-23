@@ -10,19 +10,19 @@ let eval_test str expected_value =
     let parsed = parse lexbuf in
     let value = eval_prog parsed in
     if value = expected_value
-      then "\x1b[32mpass, evaluated to: " ^ (string_of_value value)
-      else "\x1b[31mfail, evaluated to: " ^ (string_of_value value) ^ ", should evaluate to: " ^ (string_of_value expected_value)
+      then "\x1b[32mpass, evaluated to: " ^ (string_of_value value) ^ "\x1b[0m"
+      else "\x1b[31mfail, evaluated to: " ^ (string_of_value value) ^ ", should evaluate to: " ^ (string_of_value expected_value) ^ "\x1b[0m"
   with
-  | SyntaxError msg -> "\x1b[31m" ^ msg ^ ": " ^ position lexbuf
-  | Par.Error ->   "\x1b[31m" ^ "Parse error: " ^ position lexbuf
-  | RuntimeError msg -> "\x1b[31m" ^ msg
-  | Stack_overflow -> "\x1b[31mstack overflow"
+  | SyntaxError msg -> "\x1b[31m" ^ msg ^ ": " ^ position lexbuf ^ "\x1b[0m"
+  | Par.Error ->   "\x1b[31m" ^ "Parse error: " ^ position lexbuf ^ "\x1b[0m"
+  | RuntimeError msg -> "\x1b[31m" ^ msg ^ "\x1b[0m"
+  | Stack_overflow -> "\x1b[31mstack overflow" ^ "\x1b[0m"
 
 let rec batch_test files acc = match files with
   | [] -> print_string acc
   | (file_path, expected_value)::xs ->
     let result = eval_test (read_file file_path) expected_value in
-    let str = sprintf "\x1b[37m%s\n%s\n" file_path result in batch_test xs (acc ^ str)
+    let str = sprintf "%s\n%s\n" file_path result in batch_test xs (acc ^ str)
 
 (* tuples of (file_path, expected value) *)
 let test_files = [
@@ -57,23 +57,3 @@ let test_files = [
 
 
 batch_test test_files "";
-
-(*
-print_string ((string_of_int (eval_test "main () {x = 5; *x * *x}"))^"\n");
-
-print_string ((string_of_int (eval_test "
-main () {
-  x = 0;
-  while (*x <= 5) {
-    x = *x + 1
-  *x
-}
-}"))^"\n");
-
-print_string ((string_of_int (eval_test  "
-main () {
-  x = 1;
-  y = 1;
-  if (*x <= 5) { if (*x == *y) {5; 6 >=1; *y; x} else {y} } else {y} = 42; while (*x <= 200) { x= *x + 1 } *x
-  }"))^"\n");
-*)

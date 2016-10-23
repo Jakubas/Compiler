@@ -2,14 +2,14 @@ open Lex
 open Test
 open Lexing
 open Printf
-
+open Tree_parse
 let parse_with_error_as_string lexbuf =
   try
-    let _ = Par.top Lex.read lexbuf in "\x1b[32mpass"
+    let _ = Par.top Lex.read lexbuf in "\x1b[32mpass" ^  "\x1b[0m"
   with
-    | SyntaxError msg -> "\x1b[31m" ^ msg ^ ": " ^ position lexbuf
-    | Par.Error ->   "\x1b[31m" ^ "Parse error: " ^ position lexbuf
-    | _ -> "\x1b[31m" ^ "Unhandled error"
+    | SyntaxError msg -> "\x1b[31m" ^ msg ^ ": " ^ position lexbuf ^  "\x1b[0m"
+    | Par.Error ->   "\x1b[31m" ^ "Parse error: " ^ position lexbuf ^  "\x1b[0m"
+    | _ -> "\x1b[31m" ^ "Unhandled error" ^  "\x1b[0m"
 
 let parse_test str =
   let lex = Lexing.from_string str in
@@ -19,7 +19,7 @@ let rec batch_test files acc = match files with
   | []    -> print_string acc
   | x::xs ->
     let str =
-    sprintf "\x1b[37m%s\n%s\n" x (parse_test (read_file x)) in batch_test xs (acc ^ str)
+    sprintf "%s\n%s\n" x (parse_test (read_file x)) in batch_test xs (acc ^ str)
 
 let test_files = [
   (*Small test cases *)
@@ -49,3 +49,5 @@ let test_files = [
 ];;
 
 batch_test test_files "";
+
+print_parse_tree_of_string (read_file "test/large_tests/week1_parsing/iterative_bisection.jk");

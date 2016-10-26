@@ -55,7 +55,7 @@ open Ast
 
 top:
   | a = funct; EOF { [a] }
-  | a = funct; b = funct; { [a;b] }
+  | a = funct; t = top; { a::t }
 
 funct:
   | x = ID; LPAREN; args = fun_args RPAREN; LBRACKET; e = exp; RBRACKET { (x,args,e) }

@@ -1,0 +1,29 @@
+/*
+This program has identical functionality to main_at_bottom, the only
+difference is that the main method is the first function that is declared.
+The purpose of these two test cases is to show that the main function (and any
+other function as well) can be declared anywhere in the file.
+Value: 1001
+*/
+
+main() {
+  func2(5);
+  func1(2);
+  func3(100);
+}
+
+func1(b) {
+  1;
+}
+
+func2(a) {
+  2;
+}
+
+func3(a) {
+  int i = *a;
+  while (*i <= 1000) {
+    i = *i + 1;
+  }
+  *i;
+}

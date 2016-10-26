@@ -1,0 +1,17 @@
+/*
+simple recursive function
+Value: 102
+*/
+
+
+recursiveAdd(a; b) {
+  if (*a <= 100) {
+    recursiveAdd(*a + *b; *b);
+  } else {
+    *a
+  }
+}
+
+main() {
+ recursiveAdd(0; 2);
+}

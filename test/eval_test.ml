@@ -3,11 +3,15 @@ open Prog_eval
 open Test
 open Lexing
 open Printf
+open Hashtbl
 
 let eval_test str expected_value =
   let lexbuf = Lexing.from_string str in
  try
     let parsed = parse lexbuf in
+    (* Clear the hashtbls after each program run, since these are single file programs*)
+    let _ = reset Prog_eval.func_store in
+    let _ = reset Prog_eval.store in
     let value = eval_prog parsed in
     if value = expected_value
       then "\x1b[32mpass, evaluated to: " ^ (string_of_value value) ^ "\x1b[0m"
@@ -26,7 +30,8 @@ let rec batch_test files acc = match files with
 
 (* tuples of (file_path, expected value) *)
 let test_files = [
-  (* Small test cases 1 *)
+  (* Tests For Week 2 Eval *)
+  (* Small test cases from week 1 *)
   ("test/small_tests/week1_parsing/test_assignment.jk", Int' 6);
   ("test/small_tests/week1_parsing/test_const.jk", Int' 5);
   ("test/small_tests/week1_parsing/test_dereference.jk", Int' 2);
@@ -53,6 +58,18 @@ let test_files = [
   ("test/small_tests/week2_eval/fail_stackoverflow.jk", Int' 1);
   ("test/small_tests/week2_eval/fail_division_by_zero.jk", Int' 1);
   ("test/small_tests/week2_eval/fail_value_type.jk", Bool' true);
+  (* Tests For Week 3 Eval *)
+  (* Small tests cases *)
+  ("test/small_tests/week3/assign_to_function.jk", Int' 10);
+  ("test/small_tests/week3/functions_as_arguments.jk", Int' 105);
+  ("test/small_tests/week3/functions_no_args.jk", Int' 8);
+  ("test/small_tests/week3/functions_with_args.jk", Int' (-88));
+  ("test/small_tests/week3/let.jk", Int' 12);
+  ("test/small_tests/week3/main_at_bottom.jk", Int' 1001);
+  ("test/small_tests/week3/main_at_top.jk", Int' 1001);
+  ("test/small_tests/week3/new.jk", Bool' true);
+  ("test/small_tests/week3/recursion.jk", Int' 102);
+  ("test/small_tests/week3/recursive_powers.jk", Int' 1024);
 ];;
 
 

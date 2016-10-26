@@ -2,7 +2,7 @@ open Lex
 open Test
 open Lexing
 open Printf
-open Tree_parse
+
 let parse_with_error_as_string lexbuf =
   try
     let _ = Par.top Lex.read lexbuf in "\x1b[32mpass" ^  "\x1b[0m"
@@ -49,5 +49,3 @@ let test_files = [
 ];;
 
 batch_test test_files "";
-
-print_parse_tree_of_string (read_file "test/large_tests/week1_parsing/iterative_bisection.jk");

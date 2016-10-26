@@ -1,0 +1,27 @@
+/*
+this program has the main function as the last declared function
+Value: 1001
+*/
+
+func1(b) {
+  1;
+}
+
+func2(a) {
+  2;
+}
+
+func3(a) {
+  int i = *a;
+  while (*i <= 1000) {
+    i = *i + 1;
+  }
+  *i;
+}
+
+
+main() {
+  func2(5);
+  func1(2);
+  func3(100);
+}

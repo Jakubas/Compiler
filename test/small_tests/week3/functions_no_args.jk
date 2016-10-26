@@ -1,0 +1,21 @@
+/*
+this program consists of functions with no parameters
+Value: 8
+*/
+
+func1() {
+  1 + 2;
+}
+
+func2() {
+  0;
+}
+
+func3() {
+  let int x = 5;
+  *x;
+}
+
+main() {
+  func1() + func2() + func3();
+}

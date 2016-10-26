@@ -5,22 +5,28 @@ The function's value is stored in root, f is the function to be applied,
 a is the min value, b is the max value, and tol is the tolerance for the root
 value
 */
-bisect (f; a; b; tol) {
+
+f(x) {
+  fx = *x * *x - 3;
+  *fx;
+}
+
+bisect(a; b; tol) {
   int c = 0;
   int root = 0;
-  while (*b - *a >= *tol) {
+  while (*b - *a >= *tol & f(*c) != 0) {
     c = *a + *b;
-    if (f(*c) == 0) {
-    	c = *c / 2;
-    	root = *c
+    c = *c / 2;
+    if (f(*c) <= -1 & f(*a) <= -1 | f(*c) >= 0 & f(*a) >= 0) {
+      a = *c;
     } else {
-      if (f(*c) <= -1 & f(*a) <= -1 | f(*c) >= 0 & f(*a) >= 0) {
-        a = *c
-      } else {
-        b = *c
-      }
+      b = *c;
     }
   }
   root = *c;
-  *root
+  *root;
+}
+
+main() {
+  bisect(1; 18; 2);
 }

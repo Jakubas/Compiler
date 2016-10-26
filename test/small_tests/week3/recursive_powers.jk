@@ -1,0 +1,22 @@
+/*
+The function powerN given a base and a n, will recursively find the nth power
+of the base
+Value: 1024
+*/
+powerN2(currentval; base; n) {
+  if (*n >= 2) {
+    int base2 = *currentval * *base;
+    int n2 = *n - 1;
+    powerN2(*base2; *base; *n2);
+  } else {
+    *base2;
+  }
+}
+
+powerN(base; n) {
+  powerN2(*base; *base; *n);
+}
+
+main() {
+  powerN(2; 10);
+}

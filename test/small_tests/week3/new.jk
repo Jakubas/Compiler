@@ -1,0 +1,17 @@
+/*
+Creates global variables with syntax for new e.g. int str = value
+Value: true
+*/
+
+new() {
+  int x = 6;
+  int y = 100;
+  int z = 23;
+  0;
+}
+
+main() {
+  new();
+  x = *y + *z;
+  *x == 123;
+}

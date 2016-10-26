@@ -1,0 +1,15 @@
+/*
+this program will eval to 12 since the local variable has precedence over the
+global one
+Value: 12
+*/
+
+letbinds() {
+  int x = 5;
+  let int x = 6 + 6;
+  *x;
+}
+
+main() {
+  letbinds();
+}

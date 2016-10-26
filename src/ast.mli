@@ -25,6 +25,7 @@ type expression =
   | Identifier of string
   | Let of string * expression * expression
   | New of string * expression * expression
+  | Empty
 type fundef = string * string list * expression
 type program = fundef list
 val string_of_opcode : opcode -> string

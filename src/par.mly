@@ -70,6 +70,7 @@ exp:
   | e = exp; o = op; f = exp { Operator(o,e,f) }
   | e = exp; ASG; f = exp { Asg(e,f) }
   | e = exp; LPAREN; f = exp; RPAREN { Application(e,f) }
+  | e = exp; LPAREN; RPAREN { Application(e,Empty) }  
   | e = exp; SEMICOLON; f = exp { Seq(e,f) }
   | WHILE; LPAREN; e = exp; RPAREN; LBRACKET; f = exp; RBRACKET { While(e,f) }
   | WHILE; LPAREN; e = exp; RPAREN; LBRACKET; f = exp; RBRACKET;

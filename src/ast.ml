@@ -17,6 +17,7 @@ type expression =
   | Identifier of string (* x *)
   | Let of string * expression * expression (* int x = e; e *)
   | New of string * expression * expression (* final int x = e; e *)
+  | Empty
 type fundef = string * string list * expression
 type program = fundef list
 

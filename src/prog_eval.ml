@@ -97,7 +97,9 @@ let rec eval_exp env = function
     in eval_fun (x, funrecord1.params, funrecord1.exp) args
   | Identifier x -> Id' x
   | Empty -> Nothing'
-  | Readint -> print_string "Please enter a number: "; let i = read_int() in Int' i
+  | Readint ->
+    (try print_string "Please enter a number: "; let i = read_int() in Int' i
+    with int_of_string -> raise (RuntimeError ("RuntimeError: input is not a valid int")))
   | Printint (e1) ->
     let v1 = value_to_int(eval_exp env e1) in
     print_string ((string_of_int v1) ^ "\n"); Nothing'

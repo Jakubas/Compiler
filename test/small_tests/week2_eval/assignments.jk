@@ -3,10 +3,10 @@ Assigns some values and then perform operations on them
 Value: 2
 */
 main() {
-  a = 0;
-  b = 1;
-  c = 4;
-  d = 2;
-  e = *a * *b + *c / *d;
+  int a = 0;
+  int b = 1;
+  int c = 4;
+  int d = 2;
+  int e = *a * *b + *c / *d;
   *e;
 }

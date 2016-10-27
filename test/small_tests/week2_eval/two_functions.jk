@@ -3,11 +3,11 @@ This program consists of two functions
 Value: 1
 */
 first() {
-  result = 1;
+  int result = 1;
   result = *result * 5;
 }
 
 main() {
-  result = 1 / 1;
+  int result = 1 / 1;
   *result;
 }

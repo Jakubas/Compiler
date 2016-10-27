@@ -2,7 +2,7 @@
 Value: 3
 */
 main() {
-  result = 0;
+  int result = 0;
 
   if (5 == 5) {
     if (3 != 5) {

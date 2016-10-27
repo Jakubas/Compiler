@@ -68,7 +68,9 @@ let rec eval_exp env = function
     let x = value_to_string(eval_exp env e1) in
     let v2 = eval_exp env e2 in
     let i = value_to_int(v2) in
-    Hashtbl.add store x i; v2
+    if Hashtbl.mem store x
+      then let _ = Hashtbl.add store x i in v2
+      else (raise (RuntimeError ("RuntimeError: variable '" ^ x ^ "' is not defined")))
   | Deref (e1) ->
     let v1 = eval_exp env e1 in
     let x = value_to_string v1 in

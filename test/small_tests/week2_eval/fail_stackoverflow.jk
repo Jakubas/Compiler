@@ -1,6 +1,7 @@
 /* This program will cause a stack overflow */
 main() {
   /* stack overflow */
+  int x = 1;
   while (1 == 1) {
     x = 1 + 1;
   }

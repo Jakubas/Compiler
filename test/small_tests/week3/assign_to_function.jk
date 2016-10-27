@@ -4,10 +4,12 @@ Value: 10
 */
 
 func1() {
+  int a = 0;
   a;
 }
 
 func2() {
+  int b = 0;
   b;
 }
 
@@ -26,7 +28,6 @@ func4() {
 }
 
 main() {
-
   /* this block can also be written as: func2() = func3() + func4(); */
   func1() = func3();
   func2() = *a + func4();

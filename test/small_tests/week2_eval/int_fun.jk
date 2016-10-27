@@ -3,10 +3,10 @@ This function evaluates to an int
 Value: 100
 */
 main() {
-  x = 0;
+  int x = 0;
   x = *x + 1;
   x = *x * 6 / 2;
-  y = 10;
+  int y = 10;
   x = *x * *y;
   x = *x * *x;
   x = 90000 / *x;

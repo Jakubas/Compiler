@@ -5,7 +5,7 @@ Value: 1003772
 */
 
 main() {
-  x = 0;
+  int x = 0;
   while (*x <= 1000000) {
     while(*x <= 1000) {
       while (*x <= 10) {

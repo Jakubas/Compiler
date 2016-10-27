@@ -55,17 +55,7 @@ let rec batch_test files = match files with
 (* tuples of (file_path, expected value) *)
 let test_files = [
   (* Tests For Week 2 Eval *)
-  (* Small test cases from week 1 *)
-  ("test/small_tests/week1_parsing/test_assignment.jk", Int' 6);
-  ("test/small_tests/week1_parsing/test_const.jk", Int' 5);
-  ("test/small_tests/week1_parsing/test_dereference.jk", Int' 2);
-  ("test/small_tests/week1_parsing/test_identifier.jk", Id' "x");
-  ("test/small_tests/week1_parsing/test_if_else.jk", Int' 8);
-  ("test/small_tests/week1_parsing/test_negate.jk", Bool' false);
-  ("test/small_tests/week1_parsing/test_operator.jk", Bool' true);
-  ("test/small_tests/week1_parsing/test_sequence.jk", Int' (-3));
-  ("test/small_tests/week1_parsing/test_while.jk", Int' 7);
-  (* Small test cases 2 *)
+  (* Small test cases *)
   ("test/small_tests/week2_eval/assignments.jk", Int' 2);
   ("test/small_tests/week2_eval/bool_fun.jk", Bool' true);
   ("test/small_tests/week2_eval/bools.jk", Bool' true);

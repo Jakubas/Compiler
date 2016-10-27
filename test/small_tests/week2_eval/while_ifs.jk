@@ -3,7 +3,7 @@ this program has while expressions with nested ifs and vice-versa
 Value: 17
 */
 main() {
-  x = 2;
+  int x = 2;
   while (6 >= *x) {
     if (*x <= 10) {
       x = *x + 1;

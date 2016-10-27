@@ -46,7 +46,7 @@ let eval_test str expected_value =
   | Stack_overflow -> "\x1b[31mstack overflow" ^ "\x1b[0m"
 
 let rec batch_test files = match files with
-  | [] -> ""
+  | [] -> print_string ""
   | (file_path, expected_value)::xs ->
     let result = eval_test (read_file file_path) expected_value in
     let _ = printf "%s\n%s\n" file_path result in
@@ -99,4 +99,4 @@ let test_files = [
 
 batch_test test_files;
 
-stdin_test "test/small_tests/week3/read_int.jk";
+stdin_test "test/small_tests/week3/add_read_ints.jk";

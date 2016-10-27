@@ -103,7 +103,6 @@ let rec eval_exp env = function
   | Printint (e1) ->
     let v1 = value_to_int(eval_exp env e1) in
     print_string ((string_of_int v1) ^ "\n"); Nothing'
-  | e -> raise (RuntimeError ("RuntimeError: evaluating: '" ^ string_of_exp e ^ "' is not implemented"))
 
 and eval_opcode op env e1 e2 = match op with
   | Plus   -> Int' (value_to_int (eval_exp env e1) + value_to_int (eval_exp env e2))

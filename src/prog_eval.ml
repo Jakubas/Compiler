@@ -97,6 +97,10 @@ let rec eval_exp env = function
     in eval_fun (x, funrecord1.params, funrecord1.exp) args
   | Identifier x -> Id' x
   | Empty -> Nothing'
+  | Readint -> print_string "Please enter a number: "; let i = read_int() in Int' i
+  | Printint (e1) ->
+    let v1 = value_to_int(eval_exp env e1) in
+    print_string ((string_of_int v1) ^ "\n"); Nothing'
   | e -> raise (RuntimeError ("RuntimeError: evaluating: '" ^ string_of_exp e ^ "' is not implemented"))
 
 and eval_opcode op env e1 e2 = match op with
@@ -122,7 +126,6 @@ and eval_args env = function
   | Empty -> []
   | Seq(e1, e2) -> value_to_int(eval_exp env e1) :: eval_args env e2
   | e -> value_to_int(eval_exp env e) :: []
-  | _ -> raise (RuntimeError "RuntimeError: can't evaluate arguments")
 
 and eval_fun fundef args = match fundef with
   | (main,[],exp) -> eval_exp [] exp
@@ -134,4 +137,4 @@ let rec eval_prog = function
             (try Hashtbl.find func_store "main"
             with Not_found -> raise (RuntimeError ("RuntimeError: function \"main\" not defined")))
           in eval_fun("main", entry_point.params, entry_point.exp) []
-  | (name,params,exp)::xs -> print_string (name ^ " "); let _ = Hashtbl.add func_store name {params; exp} in eval_prog xs
+  | (name,params,exp)::xs -> let _ = Hashtbl.add func_store name {params; exp} in eval_prog xs

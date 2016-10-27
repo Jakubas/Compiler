@@ -5,6 +5,29 @@ open Lexing
 open Printf
 open Hashtbl
 
+let stdin_eval_test str =
+  let lexbuf = Lexing.from_string str in
+ try
+    let parsed = parse lexbuf in
+    (* Clear the hashtbls after each program run, since these are single file programs*)
+    let _ = reset Prog_eval.func_store in
+    let _ = reset Prog_eval.store in
+    let value = eval_prog parsed in
+    "\x1b[32mpass, evaluated to: " ^ (string_of_value value) ^ "\x1b[0m"
+  with
+  | SyntaxError msg -> "\x1b[31m" ^ msg ^ ": " ^ position lexbuf ^ "\x1b[0m"
+  | Par.Error ->   "\x1b[31m" ^ "Parse error: " ^ position lexbuf ^ "\x1b[0m"
+  | RuntimeError msg -> "\x1b[31m" ^ msg ^ "\x1b[0m"
+  | Stack_overflow -> "\x1b[31mstack overflow" ^ "\x1b[0m"
+
+let stdin_test filePath = match filePath with
+  | ""  -> "\x1b[31mfail, no file given" ^ "\x1b[0m"
+  | fp ->
+    let result = stdin_eval_test (read_file fp) in
+    let _ = printf "%s\n%s\n" fp result in
+    ""
+
+
 let eval_test str expected_value =
   let lexbuf = Lexing.from_string str in
  try
@@ -22,11 +45,12 @@ let eval_test str expected_value =
   | RuntimeError msg -> "\x1b[31m" ^ msg ^ "\x1b[0m"
   | Stack_overflow -> "\x1b[31mstack overflow" ^ "\x1b[0m"
 
-let rec batch_test files acc = match files with
-  | [] -> print_string acc
+let rec batch_test files = match files with
+  | [] -> ""
   | (file_path, expected_value)::xs ->
     let result = eval_test (read_file file_path) expected_value in
-    let str = sprintf "%s\n%s\n" file_path result in batch_test xs (acc ^ str)
+    let _ = printf "%s\n%s\n" file_path result in
+    batch_test xs
 
 (* tuples of (file_path, expected value) *)
 let test_files = [
@@ -73,4 +97,6 @@ let test_files = [
 ];;
 
 
-batch_test test_files "";
+batch_test test_files;
+
+stdin_test "test/small_tests/week3/read_int.jk";

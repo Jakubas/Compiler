@@ -1,0 +1,7 @@
+/*adds two ints together that are provided from the user*/
+
+main() {
+  int a = readInt();
+  int b = readInt();
+  *a + *b;
+}

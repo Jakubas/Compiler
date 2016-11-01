@@ -19,6 +19,7 @@ open Ast
 %token <int> INT
 %token <string> ID
 %token SEMICOLON
+%token COMMA
 %token WHILE
 %token IF
 %token ELSE
@@ -35,7 +36,7 @@ open Ast
 %token RPAREN
 %token EOF
 
-%right SEMICOLON
+%right SEMICOLON, COMMA
 %nonassoc RBRACKET
 %nonassoc ASG
 
@@ -60,7 +61,7 @@ top:
 funct:
   | x = ID; LPAREN; args = fun_args RPAREN; LBRACKET; e = exp; RBRACKET { (x,args,e) }
 
-fun_args: args = separated_list(SEMICOLON, ID) { args } ;
+fun_args: args = separated_list(COMMA, ID) { args } ;
 
 exp:
   | i = INT { Const(i) }
@@ -70,8 +71,9 @@ exp:
   | e = exp; o = op; f = exp { Operator(o,e,f) }
   | e = exp; ASG; f = exp { Asg(e,f) }
   | e = exp; LPAREN; f = exp; RPAREN { Application(e,f) }
-  | e = exp; LPAREN; RPAREN { Application(e,Empty) }  
+  | e = exp; LPAREN; RPAREN { Application(e,Empty) }
   | e = exp; SEMICOLON; f = exp { Seq(e,f) }
+  | e = exp; COMMA; f = exp { Arg(e,f) }
   | WHILE; LPAREN; e = exp; RPAREN; LBRACKET; f = exp; RBRACKET { While(e,f) }
   | WHILE; LPAREN; e = exp; RPAREN; LBRACKET; f = exp; RBRACKET;
     g = exp { Seq(While(e,f),g) }

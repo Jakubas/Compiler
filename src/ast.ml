@@ -17,7 +17,9 @@ type expression =
   | Identifier of string (* x *)
   | Let of string * expression * expression (* int x = e; e *)
   | New of string * expression * expression (* final int x = e; e *)
+  | Arg of expression * expression
   | Empty
+
 type fundef = string * string list * expression
 type program = fundef list
 
@@ -49,6 +51,7 @@ let rec string_of_exp exp = match exp with
   | Identifier(x) -> "Identifier " ^ "\"" ^ x ^ "\""
   | Let(x,e,f) -> "Let (\"" ^ x ^ "\", " ^ string_of_exp  e ^ ", " ^ string_of_exp  f ^ ")"
   | New(x,e,f) -> "New (\"" ^ x ^ "\", " ^ string_of_exp  e ^ ", " ^ string_of_exp  f ^ ")"
+  | Arg(e,f) -> "Arg(" ^ string_of_exp  e ^ "," ^ string_of_exp  f ^ ")"
   | Empty -> "Empty"
 
 let string_of_fundef fundef = match fundef with

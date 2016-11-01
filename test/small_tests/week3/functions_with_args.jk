@@ -3,18 +3,18 @@ this program will add up some numbers and then subtract some from the value.
 Value: -88
 */
 
-add(a;b;c;d;e) {
+add(a, b, c, d, e) {
   int add = *a + *b + *c + *d + *e;
   *add;
 }
 
 main() {
-  int a = add(2;2;4;4;100);
-  a = subtract(*a;200);
+  int a = add(2, 2, 4, 4, 100);
+  a = subtract(*a, 200);
   *a;
 }
 
-subtract(a;b) {
+subtract(a, b) {
   int subtract =  *a - *b;
   *subtract;
 }

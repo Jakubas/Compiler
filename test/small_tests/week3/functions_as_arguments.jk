@@ -3,15 +3,15 @@ In this program I will use functions as arguments for functions
 Value: 105
 */
 
-func1(a;b) {
+func1(a, b) {
   *a + *b;
 }
 
-func2(c;d) {
+func2(c, d) {
   *c + *d;
 }
 
-func3(a;b;c) {
+func3(a, b, c) {
   if (*a <= 0) {
     *b;
   } else {
@@ -19,6 +19,7 @@ func3(a;b;c) {
   }
 }
 
+
 main() {
-  func1(func2(3; 97); func3(-1; 5; 48));
+  func1(func2(3, 97), func3(-1, 5, 48));
 }

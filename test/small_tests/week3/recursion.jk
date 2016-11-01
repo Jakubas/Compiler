@@ -4,14 +4,14 @@ Value: 102
 */
 
 
-recursiveAdd(a; b) {
+recursiveAdd(a, b) {
   if (*a <= 100) {
-    recursiveAdd(*a + *b; *b);
+    recursiveAdd(*a + *b, *b);
   } else {
     *a
   }
 }
 
 main() {
- recursiveAdd(0; 2);
+ recursiveAdd(0, 2);
 }

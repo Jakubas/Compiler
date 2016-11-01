@@ -45,7 +45,6 @@ let test_files = [
   (* These tests should fail *)
   "test/small_tests/week1_parsing/test_fail_if.jk";
   "test/small_tests/week1_parsing/test_fail_operation.jk";
-  "test/small_tests/week1_parsing/test_fail_sequence.jk";
 ];;
 
 batch_test test_files "";

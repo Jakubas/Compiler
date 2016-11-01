@@ -11,7 +11,7 @@ f(x) {
   *fx;
 }
 
-bisect(a; b; tol) {
+bisect(a, b, tol) {
   int c = 0;
   int root = 0;
   while (*b - *a >= *tol & f(*c) != 0) {
@@ -28,5 +28,5 @@ bisect(a; b; tol) {
 }
 
 main() {
-  bisect(1; 18; 2);
+  bisect(1, 18, 2);
 }

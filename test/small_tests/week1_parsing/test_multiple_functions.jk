@@ -1,5 +1,5 @@
 /* check if multiple functions can be defined in the same file */
-main(a;b) {
+main(a,b) {
   a = *a + 1;
 }
 

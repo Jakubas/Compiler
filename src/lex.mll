@@ -29,6 +29,7 @@ rule read =
  | '|' { OR }
  | '!' { NOT }
  | ';' { SEMICOLON }
+ | ',' { COMMA }
  | "while" { WHILE }
  | "if" { IF }
  | "else" { ELSE }

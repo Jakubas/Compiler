@@ -98,6 +98,7 @@ let rec eval_exp env = function
       with Not_found -> raise (RuntimeError ("RuntimeError: function \"" ^ x ^ "\" not defined")))
     in eval_fun (x, funrecord1.params, funrecord1.exp) args
   | Identifier x -> Id' x
+  | Arg _ -> raise (RuntimeError ("RuntimeError: unexpected comma, commas can only be used for function arguments/parameters"))
   | Empty -> Nothing'
   | Readint ->
     (try print_string "Please enter a number: "; let i = read_int() in Int' i
@@ -127,7 +128,7 @@ and eval_opcode op env e1 e2 = match op with
 
 and eval_args env = function
   | Empty -> []
-  | Seq(e1, e2) -> value_to_int(eval_exp env e1) :: eval_args env e2
+  | Arg(e1, e2) -> value_to_int(eval_exp env e1) :: eval_args env e2
   | e -> value_to_int(eval_exp env e) :: []
 
 and eval_fun fundef args = match fundef with

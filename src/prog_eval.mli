@@ -12,8 +12,6 @@ type funrecord = {
   exp : expression;
 }
 
-val func_store : (string, funrecord) Hashtbl.t
-
 val eval_prog : program -> value
 
 val string_of_value : value -> string

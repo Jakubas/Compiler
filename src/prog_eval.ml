@@ -146,5 +146,7 @@ let rec eval_prog = function
   | [] -> let entry_point =
             (try Hashtbl.find func_store "main"
             with Not_found -> raise (RuntimeError ("RuntimeError: function \"main\" not defined")))
-          in eval_fun("main", entry_point.params, entry_point.exp) []
+          in let v1 = eval_fun("main", entry_point.params, entry_point.exp) []
+          in let _ = Hashtbl.reset func_store
+          in v1;
   | (name,params,exp)::xs -> let _ = Hashtbl.add func_store name {params; exp} in eval_prog xs

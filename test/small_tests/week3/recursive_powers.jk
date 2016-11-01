@@ -4,8 +4,9 @@ of the base
 Value: 1024
 */
 powerN2(currentval, base, n) {
+  int base2 = *currentval;
   if (*n >= 2) {
-    int base2 = *currentval * *base;
+    base2 = *currentval * *base;
     int n2 = *n - 1;
     printInt(*base2);
     powerN2(*base2, *base, *n2);

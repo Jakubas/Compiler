@@ -6,8 +6,6 @@ exception RuntimeError of string
     | Id' of string
     | Bool' of bool
     | Nothing'
-    
-val store : (string, int) Hashtbl.t
 
 type funrecord = {
   params : string list;

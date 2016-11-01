@@ -11,7 +11,6 @@ let stdin_eval_test str =
     let parsed = parse lexbuf in
     (* Clear the hashtbls after each program run, since these are single file programs*)
     let _ = reset Prog_eval.func_store in
-    let _ = reset Prog_eval.store in
     let value = eval_prog parsed in
     "\x1b[32mpass, evaluated to: " ^ (string_of_value value) ^ "\x1b[0m"
   with
@@ -34,7 +33,6 @@ let eval_test str expected_value =
     let parsed = parse lexbuf in
     (* Clear the hashtbls after each program run, since these are single file programs*)
     let _ = reset Prog_eval.func_store in
-    let _ = reset Prog_eval.store in
     let value = eval_prog parsed in
     if value = expected_value
       then "\x1b[32mpass, evaluated to: " ^ (string_of_value value) ^ "\x1b[0m"
@@ -86,7 +84,6 @@ let test_files = [
   ("test/small_tests/week3/recursive_powers.jk", Int' 1024);
 ];;
 
-
 batch_test test_files;
 
-stdin_test "test/small_tests/week3/add_read_ints.jk";
+(*stdin_test "test/small_tests/week3/add_read_ints.jk";*)

@@ -7,11 +7,9 @@ new() {
   int x = 6;
   int y = 100;
   int z = 23;
-  0;
+  x = *y + *z;
 }
 
 main() {
-  new();
-  x = *y + *z;
-  *x == 123;
+  new() == 123;
 }

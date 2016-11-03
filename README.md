@@ -7,6 +7,12 @@ You need ocamlbuild, menhir, and make installed to build the compiler.
 The test script code is contained in eval_test.ml and parse_test.ml.
 <br />The test cases are in the subdirectories of the /test directory.
 
+<br />To compare the AST pre and post optimisation run the command 'make tests' in the root directory.
+<br />This will compile all necessary files. To see the AST comparison of a file run the command:
+<br />./optimise.native -o fileName
+<br />where -o is optional and is the flag that tells the test to use optimisations and fileName is the name of the file you want to test on
+<br />To compile and run the optimise tests run the command:
+<br />make testoptimise
 <br />To compile and run the eval tests run the command:
 <br />make testeval
 <br />To compile and run the parser tests run the command:

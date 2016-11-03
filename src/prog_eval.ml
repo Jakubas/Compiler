@@ -1,4 +1,5 @@
 open Ast
+open Printf
 exception RuntimeError of string
 
 type funrecord = {
@@ -38,19 +39,26 @@ let value_to_bool = function
   | Bool' b -> b
   | Nothing' -> raise (RuntimeError ("RuntimeError: expected value of type Int', actual value is Nothing'"))
 
-let rec lookup x env store = match env with
-  | [] -> (try Int' (Hashtbl.find store x)
-          with Not_found -> raise (RuntimeError ("RuntimeError: '" ^ x ^ "' has no value assigned to it")))
-  | (y,z)::ys -> if y = x then Int' z else lookup x ys store
+let lookup' id store = try Int' (Hashtbl.find store id)
+                       with Not_found -> raise (RuntimeError ("RuntimeError: '" ^ id ^ "' has no value assigned to it"))
 
-(*let rec create_env ids args = match ids, args with
-  | [],[]       -> []
-  | x::xs,y::ys -> (x,y) :: create_env xs ys
-  | _           -> raise (RuntimeError "RuntimeError: argument/values length mismatch for a function application")*)
+let rec lookup id env store = match env with
+  | [] -> raise (RuntimeError ("RuntimeError: '" ^ id ^ "' has no value assigned to it"))
+  | (id2,value)::xs -> (match (String.get id2 0), (String.sub id2 1 ((String.length id2)-1)) with
+    (* mutable variable *)
+    | '_', id3 -> if id = id3 then lookup' id3 store else lookup id xs store
+    (* nonmutable variable *)
+    | _, _ -> if id = id2 then Int' value else lookup id xs store
+    )
 
-let rec fill_store ids args store = match ids, args with
-  | [],[]       -> []
-  | x::xs,y::ys -> Hashtbl.add store x y; fill_store xs ys store
+let add_mutable id value env store =
+  let _ = Hashtbl.add store id value in
+  let env2 = ("_"^id, 0)::env in
+  env2
+
+let rec fill_store ids values env store = match ids, values with
+  | [],[]       -> env
+  | id::xs,value::ys -> let env2 = add_mutable id value env store in fill_store xs ys env2 store
   | _           -> raise (RuntimeError "RuntimeError: argument/values length mismatch for a function application")
 
 let rec eval_exp env store = function
@@ -88,8 +96,8 @@ let rec eval_exp env store = function
   | New (x, e1, e2) ->
     let v1 = eval_exp env store e1 in
     let i = value_to_int(v1) in
-    let _ = Hashtbl.add store x i in
-    let v2 = eval_exp env store e2 in
+    let env2 = add_mutable x i env store in
+    let v2 = eval_exp env2 store e2 in
     Hashtbl.remove store x; v2
   | Let (x, e1, e2) ->
     let v1 = value_to_int(eval_exp env store e1) in
@@ -122,7 +130,7 @@ and eval_opcode op env store e1 e2 = match op with
               then Bool' true else Bool' false
               | Times  -> Int' (value_to_int (eval_exp env store e1) * value_to_int (eval_exp env store e2))
   | Equal  -> Bool' (value_to_int (eval_exp env store e1) = value_to_int (eval_exp env store e2))
-    | Noteq  -> if value_to_int (eval_exp env store e1) <> value_to_int (eval_exp env store e2)
+  | Noteq  -> if value_to_int (eval_exp env store e1) <> value_to_int (eval_exp env store e2)
               then Bool' true else Bool' false
   | And    -> if (value_to_bool (eval_exp env store e1) && value_to_bool (eval_exp env store e2))
               then Bool' true else Bool' false
@@ -139,8 +147,8 @@ and eval_fun fundef args = match fundef with
   | (main,[],exp) -> eval_exp [] (Hashtbl.create 10) exp
   | ("main",params,exp) -> raise (RuntimeError "RuntimeError: function main takes no arguments")
   | (name,params,exp) -> let store = Hashtbl.create 10 in
-    let _ = fill_store params args store in
-    eval_exp [] store exp
+    let env = fill_store params args [] store in
+    eval_exp env store exp
 
 let rec eval_prog = function
   | [] -> let entry_point =

@@ -2,6 +2,7 @@ type opcode =
   | Plus | Minus | Times | Divide
   | Leq | Geq | Equal | Noteq
   | And | Or | Not
+
 type expression =
   | Seq of expression * expression (* e; e *)
   | While of expression * expression (* while (e) {e} *)

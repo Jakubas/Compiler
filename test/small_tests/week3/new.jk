@@ -8,6 +8,7 @@ new() {
   int y = 100;
   int z = 23;
   x = *y + *z;
+  *x;
 }
 
 main() {

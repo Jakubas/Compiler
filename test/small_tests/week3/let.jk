@@ -1,6 +1,6 @@
 /*
-this program will eval to 12 since the local variable has precedence over the
-global one
+this program will eval to 12 since the let variable has precedence over the
+new variable since it is declared later
 Value: 12
 */
 

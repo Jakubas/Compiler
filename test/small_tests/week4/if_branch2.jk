@@ -1,0 +1,31 @@
+/* this test shows the optimisation of if statements */
+
+getValue(x, y) {
+  let int a = 5;
+  let int b = *a * *a;
+  let int c = *b * *b;
+  let int d = *c * *c;
+  let int e = *d * *d;
+
+  if (*a <= *b) {
+    if (*b <= *c) {
+      if (*c <= *d) {
+        if (*d <= *e) {
+          *x;
+        } else {
+          *y;
+        }
+      } else {
+        *y;
+      }
+    } else {
+      *y;
+    }
+  } else {
+    *y;
+  }
+}
+
+main() {
+  getValue(100, 200);
+}

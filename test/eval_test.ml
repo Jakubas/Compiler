@@ -4,11 +4,13 @@ open Test
 open Lexing
 open Printf
 open Hashtbl
+open Compiler_functions
 
+(*
 let stdin_eval_test str =
   let lexbuf = Lexing.from_string str in
  try
-    let parsed = parse lexbuf in
+    let parsed = Test.parse lexbuf in
     let value = eval_prog parsed in
     "\x1b[32mpass, evaluated to: " ^ (string_of_value value) ^ "\x1b[0m"
   with
@@ -23,13 +25,14 @@ let stdin_test filePath = match filePath with
     let result = stdin_eval_test (read_file fp) in
     let _ = printf "%s\n%s\n" fp result in
     ""
-
+*)
 
 let eval_test str expected_value =
   let lexbuf = Lexing.from_string str in
  try
-    let parsed = parse lexbuf in
-    let value = eval_prog parsed in
+    let parsed = Test.parse_with_error lexbuf in
+    let optimised = optimise parsed in
+    let value = eval optimised in
     if value = expected_value
       then "\x1b[32mpass, evaluated to: " ^ (string_of_value value) ^ "\x1b[0m"
       else "\x1b[31mfail, evaluated to: " ^ (string_of_value value) ^ ", should evaluate to: " ^ (string_of_value expected_value) ^ "\x1b[0m"
@@ -81,5 +84,3 @@ let test_files = [
 ];;
 
 batch_test test_files;
-
-(*stdin_test "test/small_tests/week3/add_read_ints.jk";*)

@@ -1,0 +1,14 @@
+/* Unrolls the while loop */
+
+unrollThis2() {
+  int x = -5;
+  while(*x <= 200) {
+    x = *x + 10;
+  }
+  *x + 10 * 5;
+}
+
+main() {
+ let int x = unrollThis2();
+ *x;
+}

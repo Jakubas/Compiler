@@ -1,0 +1,11 @@
+
+
+main() {
+  int x = 10;
+  int y = 100;
+  let int x = 5;
+  y = *x + 10; /* 15 */
+  let int y = *y * *x; /* 75 */
+  let int x = *y; /* 75 */
+  *x + *y;
+}

@@ -1,0 +1,19 @@
+/* this test shows the optimisation of if statements */
+
+branch(l, r) {
+  let int a = 5;
+  let int b = 10;
+  if (*a <= *b) {
+    if (500 >= 63) {
+      *l * 4;
+    } else {
+      *l * 8;
+    }
+  } else {
+    *r / 2;
+  }
+}
+
+main() {
+  branch(1, 2);
+}

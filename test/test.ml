@@ -24,11 +24,7 @@ let position lexbuf =
 
 let parse_with_error lexbuf =
   try Par.top Lex.read lexbuf with
-  | SyntaxError msg -> prerr_string (msg ^ ": ");
-                       print_position lexbuf;
-                       exit (-1)
-  | Par.Error ->   prerr_string "Parse error: ";
-                       print_position lexbuf;
-                       exit (-1)
+  | SyntaxError msg -> raise (SyntaxError msg)
+  | Par.Error ->   raise(Par.Error)
 
 let parse lexbuf = Par.top Lex.read lexbuf

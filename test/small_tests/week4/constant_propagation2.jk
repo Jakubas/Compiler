@@ -1,0 +1,9 @@
+
+main() {
+  let int x = 5;
+  let int y = *x + *x; /* 10 */
+  let int z = *x + *y; /* 15 */
+  let int x = *z + *y; /* 25 */
+  let int y = *y + *y + *z; /* 35 */
+  *y + *x;
+}

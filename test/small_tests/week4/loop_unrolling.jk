@@ -1,0 +1,15 @@
+/* Unrolls this while loop */
+
+unrollThis() {
+  int x = -5;
+  x = 0;
+  int y = *x;
+  while(*y <= 100) {
+    y = *y + 1;
+  }
+  *y;
+}
+
+main() {
+ unrollThis();
+}

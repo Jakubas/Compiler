@@ -21,4 +21,5 @@ powerN(base, n) {
 
 main() {
   powerN(2, 10);
+
 }

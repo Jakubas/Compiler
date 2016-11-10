@@ -3,7 +3,7 @@
 branch(l, r) {
   let int a = 5;
   let int b = 10;
-  if (*a <= *b) {
+  if (a <= b) {
     if (500 >= 63) {
       *l * 4;
     } else {

@@ -28,7 +28,6 @@ func4() {
 }
 
 main() {
-  /* this block can also be written as: func2() = func3() + func4(); */
   int a = func1() + func3();
   int b = *a + func2() + func4();
   *b;

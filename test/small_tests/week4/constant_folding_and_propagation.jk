@@ -5,8 +5,8 @@ Value: 12
 main() {
   let int a = 1;
   let int b = 2;
-  let int c = *a + *b; /* 3 */
+  let int c = a + b; /* 3 */
   let int d = 6 + 6; /* 12 */
-  let int e = *d * 5; /* 60 */
-  *e / 5; /* 12 */
+  let int e = d * 5; /* 60 */
+  e / 5; /* 12 */
 }

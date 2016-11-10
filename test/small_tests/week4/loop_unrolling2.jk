@@ -10,5 +10,5 @@ unrollThis2() {
 
 main() {
  let int x = unrollThis2();
- *x;
+ x;
 }

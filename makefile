@@ -9,6 +9,12 @@ clean:
 tests:
 	ocamlbuild -Is src,test -use-menhir -use-ocamlfind optimise_test.native eval_test.native parse_test.native optimise.native
 
+testinterpret:
+	ocamlbuild -Is src,test -use-menhir -use-ocamlfind interpret_test.native && ./interpret_test.native
+
+testsip:
+	ocamlbuild -Is src,test -use-menhir -use-ocamlfind prog_sip.native && ./prog_sip.native
+
 testoptimise:
 	ocamlbuild -Is src,test -use-menhir -use-ocamlfind optimise_test.native && ./optimise_test.native
 

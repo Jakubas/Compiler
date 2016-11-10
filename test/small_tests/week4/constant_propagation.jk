@@ -2,9 +2,9 @@
 main() {
   let int x = 10;
   let int y = 5;
-  if (*x <= *y) {
-    *x;
+  if (x <= y) {
+    x;
   } else {
-    *y;
+    y;
   }
 }

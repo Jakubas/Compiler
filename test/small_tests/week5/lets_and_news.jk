@@ -1,0 +1,16 @@
+main() {
+    /* immutables */
+    let int x = 2;
+    let int y = 4;
+    let int z = 6;
+    /* mutables */
+    int x = 10;
+    int y = 20;
+    int z = 30;
+    /* assignments */
+    x = 100;
+    z = 10;
+    z = 50;
+    y = 300;
+    *z + *y + *x + x + y + z;
+}

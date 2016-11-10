@@ -31,7 +31,7 @@ let eval_test str expected_value =
   let lexbuf = Lexing.from_string str in
  try
     let parsed = Test.parse_with_error lexbuf in
-    let optimised = optimise parsed in
+    let optimised = parsed in
     let value = eval optimised in
     if value = expected_value
       then "\x1b[32mpass, evaluated to: " ^ (string_of_value value) ^ "\x1b[0m"

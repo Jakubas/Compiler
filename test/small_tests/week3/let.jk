@@ -7,7 +7,7 @@ Value: 12
 letbinds() {
   int x = 5;
   let int x = 6 + 6;
-  *x;
+  x;
 }
 
 main() {

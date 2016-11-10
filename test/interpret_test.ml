@@ -1,5 +1,5 @@
 open Ast
-open Prog_sip
+open Prog_interpret
 open Lexing
 open Lex
 open Test
@@ -17,7 +17,7 @@ let interpret_test str expected_value =
   with
   | SyntaxError msg -> "\x1b[31m" ^ msg ^ ": " ^ position lexbuf ^ "\x1b[0m"
   | Par.Error ->   "\x1b[31m" ^ "Parse error: " ^ position lexbuf ^ "\x1b[0m"
-  | SipError msg -> "\x1b[31m" ^ msg ^ "\x1b[0m"
+  | InterpretError msg -> "\x1b[31m" ^ msg ^ "\x1b[0m"
   | Stack_overflow -> "\x1b[31mstack overflow" ^ "\x1b[0m"
 
 let rec batch_test files = match files with

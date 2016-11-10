@@ -25,14 +25,18 @@ let print_position lexbuf =
   eprintf "Pos %d:%d:%d\n" pos.pos_lnum pos.pos_bol pos.pos_cnum
 
 (* parse a string into an AST *)
-let parse file_path =
-  let file_str = (read_file file_path) in
-  let lexbuf = Lexing.from_string file_str in
+let parse_string str =
+  let lexbuf = Lexing.from_string str in
   try
     Par.top Lex.read lexbuf
   with
     | SyntaxError msg -> raise (SyntaxError msg)
     | Par.Error -> raise (Par.Error)
+
+(* parse a file into an AST *)
+let parse file_path =
+  let file_str = (read_file file_path) in
+  parse_string file_str
 
 (* Optimise AST if flag is set *)
 let optimise parsed = optim_prog parsed

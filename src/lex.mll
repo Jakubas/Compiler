@@ -4,12 +4,12 @@ exception SyntaxError of string
 }
 
 let int = ['0'-'9']+
-let white = ' ' | '\t'
+let white = ' ' | '\t' | '\r' | '\n' | "\r\n"
 let newline = '\r' | '\n' | "\r\n"
 let identifier = ['a'-'z' 'A'-'Z' '0'-'9']+
 let comment = "/*" _* "*/"
 let comment = "/*" ([^'*'] | '*'[^'/'])* "*/"
-let closingBracket = ';' white* comment* '}' white* comment* ';' | '}' white* comment* ';' | ';' white* comment* '}' | '}'
+let closingBracket = ';' (white*|comment*)* '}' (white*|comment*)* ';' | '}' (white*|comment*)* ';' | ';' (white*|comment*)* '}' | '}'
 
 rule read =
  parse

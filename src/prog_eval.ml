@@ -39,26 +39,21 @@ let value_to_bool = function
   | Bool' b -> b
   | Nothing' -> raise (RuntimeError ("RuntimeError: expected value of type Int', actual value is Nothing'"))
 
-let lookup' id store = try Int' (Hashtbl.find store id)
+let lookupStore id store = try Int' (Hashtbl.find store id)
                        with Not_found -> raise (RuntimeError ("RuntimeError: '" ^ id ^ "' has no value assigned to it"))
 
-let rec lookup id env store = match env with
-  | [] -> raise (RuntimeError ("RuntimeError: '" ^ id ^ "' has no value assigned to it"))
-  | (id2,value)::xs -> (match (String.get id2 0), (String.sub id2 1 ((String.length id2)-1)) with
-    (* mutable variable *)
-    | '_', id3 -> if id = id3 then lookup' id3 store else lookup id xs store
-    (* nonmutable variable *)
-    | _, _ -> if id = id2 then Int' value else lookup id xs store
-    )
+let rec lookup id env = match env with
+  | [] -> Id' id(*raise (RuntimeError ("RuntimeError: constant '" ^ id ^ "' has no value assigned to it"))*)
+  | (id2,value)::xs -> if id = id2 then Int' value else lookup id xs
 
-let add_mutable id value env store =
-  let _ = Hashtbl.add store id value in
-  let env2 = ("_"^id, 0)::env in
-  env2
+let add_mutable id value store =
+  let _ = Hashtbl.add store id value in store (*in
+  let env2 = (id, 0)::env in
+  env2*)
 
-let rec fill_store ids values env store = match ids, values with
-  | [],[]       -> env
-  | id::xs,value::ys -> let env2 = add_mutable id value env store in fill_store xs ys env2 store
+let rec fill_store ids values store = match ids, values with
+  | [],[]       -> store
+  | id::xs,value::ys -> let _ = add_mutable id value store in fill_store xs ys store
   | _           -> raise (RuntimeError "RuntimeError: argument/values length mismatch for a function application")
 
 let rec eval_exp env store = function
@@ -82,10 +77,11 @@ let rec eval_exp env store = function
     if Hashtbl.mem store x
       then let _ = Hashtbl.add store x i in v2
       else (raise (RuntimeError ("RuntimeError: variable '" ^ x ^ "' is not defined")))
+  | Deref (Identifier x) -> lookupStore x store;
   | Deref (e1) ->
     let v1 = eval_exp env store e1 in
     let x = value_to_string v1 in
-    lookup x env store;
+    lookupStore x store;
   | Operator (op,e1,e2) -> eval_opcode op env store e1 e2
   | Negate (op,e1) -> (match op with
     | Not ->
@@ -96,8 +92,8 @@ let rec eval_exp env store = function
   | New (x, e1, e2) ->
     let v1 = eval_exp env store e1 in
     let i = value_to_int(v1) in
-    let env2 = add_mutable x i env store in
-    let v2 = eval_exp env2 store e2 in
+    let _ = add_mutable x i store in
+    let v2 = eval_exp env store e2 in
     Hashtbl.remove store x; v2
   | Let (x, e1, e2) ->
     let v1 = value_to_int(eval_exp env store e1) in
@@ -109,7 +105,7 @@ let rec eval_exp env store = function
       (try Hashtbl.find func_store x
       with Not_found -> raise (RuntimeError ("RuntimeError: function \"" ^ x ^ "\" not defined")))
     in eval_fun (x, funrecord1.params, funrecord1.exp) args
-  | Identifier x -> Id' x
+  | Identifier x -> lookup x env;
   | Arg _ -> raise (RuntimeError ("RuntimeError: unexpected comma, commas can only be used for function arguments/parameters"))
   | Empty -> Nothing'
   | Readint ->
@@ -124,11 +120,11 @@ and eval_opcode op env store e1 e2 = match op with
   | Minus  -> Int' (value_to_int (eval_exp env store e1) - value_to_int (eval_exp env store e2))
   | Divide -> (try Int' (value_to_int (eval_exp env store e1) / value_to_int (eval_exp env store e2))
               with Division_by_zero -> raise (RuntimeError ("RuntimeError: division by zero")))
+  | Times  -> Int' (value_to_int (eval_exp env store e1) * value_to_int (eval_exp env store e2))
   | Leq    -> if value_to_int (eval_exp env store e1) <= value_to_int (eval_exp env store e2)
               then Bool' true else Bool' false
   | Geq    -> if value_to_int (eval_exp env store e1) >= value_to_int (eval_exp env store e2)
               then Bool' true else Bool' false
-              | Times  -> Int' (value_to_int (eval_exp env store e1) * value_to_int (eval_exp env store e2))
   | Equal  -> Bool' (value_to_int (eval_exp env store e1) = value_to_int (eval_exp env store e2))
   | Noteq  -> if value_to_int (eval_exp env store e1) <> value_to_int (eval_exp env store e2)
               then Bool' true else Bool' false
@@ -147,8 +143,8 @@ and eval_fun fundef args = match fundef with
   | (main,[],exp) -> eval_exp [] (Hashtbl.create 10) exp
   | ("main",params,exp) -> raise (RuntimeError "RuntimeError: function main takes no arguments")
   | (name,params,exp) -> let store = Hashtbl.create 10 in
-    let env = fill_store params args [] store in
-    eval_exp env store exp
+    let _ = fill_store params args store in
+    eval_exp [] store exp
 
 let rec eval_prog = function
   | [] -> let entry_point =

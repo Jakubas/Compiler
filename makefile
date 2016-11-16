@@ -5,12 +5,16 @@ build:
 
 clean:
 	rm -r _build/*
+	rm -r *.native
 
 tests:
 	ocamlbuild -Is src,test -use-menhir -use-ocamlfind optimise_test.native eval_test.native parse_test.native optimise.native codegen.native
 
 testinterpret:
 	ocamlbuild -Is src,test -use-menhir -use-ocamlfind interpret_test.native && ./interpret_test.native
+
+testcompiler:
+	ocamlbuild -Is src,test -use-menhir -use-ocamlfind prog_codegenx86.native && ./prog_codegenx86.native
 
 testcodegen:
 	ocamlbuild -Is src,test -use-menhir -use-ocamlfind codegen_test.native && ./codegen_test.native
@@ -23,3 +27,6 @@ testeval:
 
 testparser:
 	ocamlbuild -Is src,test -use-menhir -use-ocamlfind parse_test.native && ./parse_test.native
+
+container:
+	sudo docker run -v /home/daniel/Compiler:/home/opam/compiler -i -t ocaml/opam:ubuntu /bin/bash

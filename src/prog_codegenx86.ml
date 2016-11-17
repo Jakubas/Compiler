@@ -55,7 +55,6 @@ ret
 
 open Hashtbl
 open Ast
-open Compiler_functions
 exception Codegenx86Error of string
 
 (* Configuration *)
@@ -85,7 +84,7 @@ let codegenx86_div _ =
     |> Buffer.add_string code
 
 let codegenx86_id addr =
-    "//offset " ^ (string_of_int addr) ^ " id\n" ^
+    "//offset " ^ (string_of_int addr) ^ " lookup\n" ^
     "movq  " ^ (-16 - 8 * addr |> string_of_int) ^  "(%rbp), %rax\n" ^
     "pushq %rax\n"
     |> Buffer.add_string code
@@ -170,6 +169,19 @@ let rec codegenx86_prog = function
             let chan = open_out "templ.s" in
             Buffer.output_buffer chan code
         else
-            codegenx86_prog xs;;
+            codegenx86_prog xs
 
-codegenx86_prog (parse "src/test.jk");
+let rec codegenx86_prog' filename = function
+    | [] -> raise (Codegenx86Error ("no main function defined"))
+    | (name, _, exp)::xs ->
+        if name = "main" then
+            let _ = Buffer.reset code in
+            let _ = sp := 0 in
+            let _ = Buffer.add_string code prefix in
+            let _ = codegenx86 [] exp in
+            let _ = Buffer.add_string code "popq  %rdi\n" in
+            let _ = Buffer.add_string code suffix in
+            let chan = open_out (filename ^ ".s") in
+            Buffer.output_buffer chan code
+        else
+            codegenx86_prog' filename xs;;

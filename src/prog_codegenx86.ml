@@ -59,6 +59,9 @@ exception Codegenx86Error of string
 
 (* Configuration *)
 let sp = ref 0
+let lblcounter =
+  let count = ref (0) in
+  fun () -> incr count; !count
 
 (* get operation instruction *)
 let string_of_op = function
@@ -67,8 +70,19 @@ let string_of_op = function
     | Times  -> "imulq "
     | _ -> raise (Codegenx86Error ("SipError: op not implemented"))
 
-(* Instruction Set *)
+(* get operation instruction *)
+let string_of_logical_op = function
+    | Leq   -> "jle   "
+    | Geq   -> "jge   "
+    | Equal -> "je    "
+    | Noteq -> "jne   "
+    (*| And   -> "and"
+    | Or    -> "or"*)
+    | _ -> raise (Codegenx86Error ("SipError: op not implemented"))
+
 let code = Buffer.create 1000
+
+(* Instruction Set *)
 let codegenx86_op op =
     "popq  %rax\n" ^
     "popq  %rbx\n" ^
@@ -105,15 +119,30 @@ let codegenx86_let _ =
     "pushq %rax\n"
     |> Buffer.add_string code
 
+let codegenx86_if op label =
+    "popq  %rax\n" ^
+    "popq  %rbx\n" ^
+    "cmpq  %rax, %rbx\n" ^
+    (string_of_logical_op op) ^ label ^ "\n"
+    |> Buffer.add_string code
+
+let codegenx86_jmp label =
+    "jmp   " ^ label ^ "\n"
+    |> Buffer.add_string code
+
+let codegenx86_label label =
+    label ^ ":\n"
+    |> Buffer.add_string code
+
 (* Symbol Table Functions *)
 let insert symbol addr symt = ((symbol, addr) :: symt)
 let rec lookup symbol symt = match symt with
   | [] -> raise (Codegenx86Error ("SipError: immutable symbol '" ^ symbol ^ "' has no value assigned to it"))
-  | (symbol2,addr)::xs -> if symbol = symbol2 then (*let _ = print_string("immutable:" ^ (string_of_int(find ram addr)) ^ "\n") in*) addr else lookup symbol xs
+  | (symbol2,addr)::xs -> if symbol = symbol2 then addr else lookup symbol xs
 let insert_mutable symbol addr symt = (("_"^symbol, addr) :: symt)
 let rec lookup_mutable symbol symt = match symt with
 | [] -> raise (Codegenx86Error ("SipError: mutable symbol '" ^ symbol ^ "' has no value assigned to it"))
-| (symbol2,addr)::xs -> if ("_"^symbol) = symbol2 then (*let _ = print_string("Mutable:" ^ (string_of_int(find ram addr)) ^ "\n") in*) addr else lookup_mutable symbol xs
+| (symbol2,addr)::xs -> if ("_"^symbol) = symbol2 then addr else lookup_mutable symbol xs
 
 let rec codegenx86 symt = function
     | Seq (e1, e2) ->
@@ -155,6 +184,22 @@ let rec codegenx86 symt = function
         let addr = lookup_mutable x symt in
         codegenx86_asg addr;
         sp := !sp - 1
+    | If (Operator (oper, e1, e2), e3, e4) ->
+        codegenx86 symt e1;
+        codegenx86 symt e2;
+
+        let label = "label" ^ (string_of_int (lblcounter())) in
+        let endlabel = "endlabel" ^ (string_of_int (lblcounter())) in
+        let _ = codegenx86_if oper label in
+        let _ = codegenx86 symt e4 in
+        (* gen uncoditonal jump to end label *)
+        let _ = codegenx86_jmp endlabel in
+        (* gen label for when if statement is true *)
+        let _ = codegenx86_label label in
+        let _ = codegenx86 symt e3 in
+        (* gen end label *)
+        codegenx86_label endlabel
+        
     | x -> raise (Codegenx86Error ((string_of_exp x) ^ " not implemented"))
 
 let rec codegenx86_prog = function

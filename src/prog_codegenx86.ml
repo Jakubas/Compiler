@@ -134,10 +134,29 @@ let codegenx86_id addr =
     "pushq %rax\n"
     |> Buffer.add_string code
 
-let codegenx86_asg addr =
-    "//offset " ^ (string_of_int addr) ^ " asg\n" ^
+let codegenx86_mutable addr =
+    "//offset " ^ (string_of_int addr) ^ " mutable lookup\n" ^
+    "movq  $" ^ (-16 - 8 * addr |> string_of_int) ^  ", %rax\n" ^
+    "pushq %rax\n"
+    |> Buffer.add_string code
+
+let codegenx86_deref _ =
     "popq  %rax\n" ^
-    "movq  %rax, " ^ (-16 - 8 * addr |> string_of_int) ^  "(%rbp)\n"
+    "movq  %rbp, %rbx\n" ^
+    "addq  %rax, %rbx\n" ^
+    "movq  -0(%rbx), %rax\n" ^
+    "pushq %rax\n"
+    |> Buffer.add_string code
+
+let codegenx86_asg _ =
+    (*top of stack is stack offset
+      2nd is value to be assigned*)
+    "//asg\n" ^
+    "popq  %rax\n" ^
+    "movq  %rbp, %rbx\n" ^
+    "addq  %rax, %rbx\n" ^
+    "popq  %rax\n" ^
+    "movq  %rax, -0(%rbx)\n"
     |> Buffer.add_string code
 
 let codegenx86_st n =
@@ -171,88 +190,111 @@ let codegenx86_call label =
     |> Buffer.add_string code
 
 (* Symbol Table Functions *)
-let insert symbol addr symt = ((symbol, addr) :: symt)
+(* (symbolName, (memoryAddress, isMutable)) *)
+let insert symbol addr symt = ((symbol, (addr, false)) :: symt)
+let insert_mutable symbol addr symt = ((symbol, (addr, true)) :: symt)
 let rec lookup symbol symt = match symt with
-  | [] -> raise (Codegenx86Error ("SipError: immutable symbol '" ^ symbol ^ "' has no value assigned to it"))
-  | (symbol2,addr)::xs -> if symbol = symbol2 then addr else lookup symbol xs
-
-let insert_mutable symbol addr symt = (("_"^symbol, addr) :: symt)
+    | [] -> raise (Codegenx86Error ("Codegenx86Error: symbol '" ^ symbol ^ "' has no value assigned to it"))
+    | (symbol2, vals)::xs -> if symbol = symbol2 then vals else lookup symbol xs
 let rec lookup_mutable symbol symt = match symt with
-| [] -> raise (Codegenx86Error ("SipError: mutable symbol '" ^ symbol ^ "' has no value assigned to it"))
-| (symbol2,addr)::xs -> if ("_"^symbol) = symbol2 then addr else lookup_mutable symbol xs
+    | [] -> raise (Codegenx86Error ("Codegenx86Error: mutable symbol '" ^ symbol ^ "' has no value assigned to it"))
+    | (symbol2,(addr, true))::xs -> if symbol = symbol2 then addr else lookup_mutable symbol xs
+    | (symbol2,(addr, false))::xs -> lookup_mutable symbol xs
 
 let rec fill_symt acc = function
     | []    -> acc
     | x::xs ->
-        let acc' = ("_"^x, !sp) :: acc in
+        let acc' = (x, (!sp, true)) :: acc in
         let _ = sp := !sp + 1 in
         fill_symt acc' xs
 
-let rec codegenx86 symt = function
+let rec codegenx86 symt frame = function
     | Seq (e1, e2) ->
-        codegenx86 symt e1;
-        codegenx86 symt e2
+        codegenx86 symt frame e1;
+        codegenx86 symt frame e2
     | Operator (Divide, e1, e2) ->
-        codegenx86 symt e1;
-        codegenx86 symt e2;
+        codegenx86 symt frame e1;
+        codegenx86 symt frame e2;
         codegenx86_div();
         sp := !sp - 1
     | Operator ((Leq|Geq|Equal|Noteq) as oper, e1, e2) ->
-        codegenx86 symt e1;
-        codegenx86 symt e2;
+        codegenx86 symt frame e1;
+        codegenx86 symt frame e2;
         codegenx86_bool_op oper;
         sp := !sp - 1
     | Operator (oper, e1, e2) ->
-        codegenx86 symt e1;
-        codegenx86 symt e2;
+        codegenx86 symt frame e1;
+        codegenx86 symt frame e2;
         codegenx86_op oper;
         sp := !sp - 1
     | Const n ->
         codegenx86_st n;
         sp := !sp + 1;
     | Identifier x ->
-        let addr = lookup x symt in
-        codegenx86_id addr;
-        sp := !sp + 1
+        let vals = lookup x symt in
+        let addr = fst vals in
+        let isMutable = snd vals in
+        if isMutable then
+            match frame with
+                | [] -> raise (Codegenx86Error ("Codegenx86Error: undefined behaviour for variable '" ^ x ^ "'"))
+                | _  ->
+                    codegenx86_mutable addr;
+                    sp := !sp + 1
+        else
+            (match frame with
+                | [] ->
+                    codegenx86_id addr;
+                    sp := !sp + 1
+                | _  -> raise (Codegenx86Error ("Codegenx86Error: undefined behaviour for variable '" ^ x ^ "'")))
+
     | Let (x, e1, e2) ->
-        codegenx86 symt e1;
+        codegenx86 symt frame e1;
         let symt' = insert x (!sp) symt in
-        codegenx86 symt' e2;
+        codegenx86 symt' frame e2;
         codegenx86_let();
         sp := !sp - 1
     | New (x, e1, e2) ->
-        codegenx86 symt e1;
+        codegenx86 symt frame e1;
         let symt' = insert_mutable x (!sp) symt in
-        codegenx86 symt' e2;
+        codegenx86 symt' frame e2;
         codegenx86_let();
         sp := !sp - 1
-    | Deref (Identifier x) ->
+    | Deref (e1) ->
+        codegenx86 symt (Deref (e1) :: frame) e1;
+        codegenx86_deref()
+    | Asg (e1, e2) ->
+        codegenx86 symt frame e2;
+        codegenx86 symt (Asg (e1, e2) :: frame) e1;
+        codegenx86_asg();
+        sp := !sp - 2
+    (*| Deref (Identifier x) ->
         let addr = lookup_mutable x symt in
         codegenx86_id addr;
         sp := !sp + 1
-    | Asg (Identifier x, e1) ->
+    *)
+    (*| Asg (Identifier x, e1) ->
         let _ = codegenx86 symt e1 in
         let addr = lookup_mutable x symt in
         codegenx86_asg addr;
-        sp := !sp - 1
+        sp := !sp - 1*)
     | If (e1, e2, e3) ->
-        codegenx86 symt e1;
+        codegenx86 symt frame e1;
         let label = "label" ^ (string_of_int (lblcounter true)) in
         let endlabel = "endlabel" ^ (string_of_int (lblcounter false)) in
         let _ = codegenx86_if label in
-        let _ = codegenx86 symt e3 in
+        let _ = codegenx86 symt frame e3 in
         let _ = codegenx86_jmp endlabel in
         let _ = codegenx86_label label in
-        let _ = codegenx86 symt e2 in
+        let _ = codegenx86 symt frame e2 in
         codegenx86_label endlabel;
         sp := !sp - 1
     | While (e1, e2) ->
         let label = "whilestart" ^ (string_of_int (lblcounter true)) in
         let endlabel = "whileend" ^ (string_of_int (lblcounter false)) in
         let _ = codegenx86_label label in
-        let _ = codegenx86 symt e1 in
+        let _ = codegenx86 symt frame e1 in
         let _ = codegenx86_while endlabel in
-        let _ = codegenx86 symt e2 in
+        let _ = codegenx86 symt frame e2 in
         let _ = codegenx86_jmp label in
         codegenx86_label endlabel;
         sp := !sp - 1
@@ -270,9 +312,9 @@ let rec codegenx86 symt = function
 and codegen_args symt = function
   | Empty -> ()
   | Arg(e1, e2) ->
-    codegenx86 symt e1;
+    codegenx86 symt [] e1;
     codegen_args symt e2
-  | e -> codegenx86 symt e
+  | e -> codegenx86 symt [] e
 
 let rec codegenx86_prog = function
     | [] -> raise (Codegenx86Error ("no main function defined"))
@@ -280,7 +322,7 @@ let rec codegenx86_prog = function
         if name = "main" then
             let _ = Buffer.reset code in
             let _ = Buffer.add_string code prefix in
-            let _ = codegenx86 [] exp in
+            let _ = codegenx86 [] [] exp in
             let _ = Buffer.add_string code "popq  %rdi\n" in
             let _ = Buffer.add_string code suffix in
             let chan = open_out "templ.s" in
@@ -293,7 +335,7 @@ let rec codegenx86_prog'' = function
     | ("main", [], exp)::xs ->
         let _ = sp := 0 in
         let _ = Buffer.add_string code main_prefix in
-        let _ = codegenx86 [] exp in
+        let _ = codegenx86 [] [] exp in
         let _ = Buffer.add_string code "popq  %rdi\n" in
         Buffer.add_string code suffix
     | (name, params, exp)::xs ->
@@ -302,7 +344,7 @@ let rec codegenx86_prog'' = function
             let _ = Hashtbl.add func_store name params in
             let _ = Buffer.add_string code "\n" in
             let _ = codegenx86_label name in
-            let _ = codegenx86 symt exp in
+            let _ = codegenx86 symt [] exp in
             let _ = Buffer.add_string code "popq  %rax\nret\n" in
             codegenx86_prog'' xs
 
@@ -314,21 +356,3 @@ let rec codegenx86_prog' filename prog =
     let _ = codegenx86_prog'' prog in
     let chan = open_out (filename ^ ".s") in
     Buffer.output_buffer chan code;;
-
-(*
-let rec codegenx86_prog' filename = function
-    | [] -> raise (Codegenx86Error ("no main function defined"))
-    | (name, _, exp)::xs ->
-        if name = "main" then
-            let _ = Buffer.reset code in
-            let _ = sp := 0 in
-            let _ = Buffer.add_string code prefix in
-            let _ = Buffer.add_string code main_prefix in
-            let _ = codegenx86 [] exp in
-            let _ = Buffer.add_string code "popq  %rdi\n" in
-            let _ = Buffer.add_string code suffix in
-            let chan = open_out (filename ^ ".s") in
-            Buffer.output_buffer chan code
-        else
-            codegenx86_prog' filename xs;;
-*)

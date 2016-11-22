@@ -158,9 +158,12 @@ let codegenx86_label label =
     label ^ ":\n"
     |> Buffer.add_string code
 
-let codegenx86_call label =
+let codegenx86_stackframe _ =
     "pushq %rbp\n" ^
-    "movq  %rsp, %rbp\n" ^
+    "movq  %rsp, %rbp\n"
+    |> Buffer.add_string code
+
+let codegenx86_call label =
     "call  " ^ label ^ "\n" ^
     "movq  %rbp, %rsp\n" ^
     "popq  %rbp\n" ^
@@ -178,11 +181,12 @@ let rec lookup_mutable symbol symt = match symt with
 | [] -> raise (Codegenx86Error ("SipError: mutable symbol '" ^ symbol ^ "' has no value assigned to it"))
 | (symbol2,addr)::xs -> if ("_"^symbol) = symbol2 then addr else lookup_mutable symbol xs
 
-(*let insert_function func_symbol args symt = (("__"^func_symbol, args) :: symt)
-let rec lookup_function func_symbol symt = match symt with
-| [] -> raise (Codegenx86Error ("SipError: mutable symbol '" ^ func_symbol ^ "' has no value assigned to it"))
-| (func_symbol2,args)::xs -> if ("__"^func_symbol) = func_symbol2 then args else lookup_function func_symbol xs
-*)
+let rec fill_symt acc = function
+    | []    -> acc
+    | x::xs ->
+        let acc' = ("_"^x, !sp) :: acc in
+        let _ = sp := !sp + 1 in
+        fill_symt acc' xs
 
 let rec codegenx86 symt = function
     | Seq (e1, e2) ->
@@ -252,11 +256,23 @@ let rec codegenx86 symt = function
         let _ = codegenx86_jmp label in
         codegenx86_label endlabel;
         sp := !sp - 1
-    | Application (Identifier name, Empty) ->
-        codegenx86_call name;
+    | Application (Identifier name, args) ->
+        codegenx86_stackframe();
+        let prev_sp = !sp in
+        let _ = sp := -1 in
+        let _ = codegen_args symt args in
+        let _ = codegenx86_call name in
+        sp := prev_sp;
         (* needs testing *)
         sp := !sp + 1
     | x -> raise (Codegenx86Error ((string_of_exp x) ^ " not implemented"))
+
+and codegen_args symt = function
+  | Empty -> ()
+  | Arg(e1, e2) ->
+    codegenx86 symt e1;
+    codegen_args symt e2
+  | e -> codegenx86 symt e
 
 let rec codegenx86_prog = function
     | [] -> raise (Codegenx86Error ("no main function defined"))
@@ -280,12 +296,13 @@ let rec codegenx86_prog'' = function
         let _ = codegenx86 [] exp in
         let _ = Buffer.add_string code "popq  %rdi\n" in
         Buffer.add_string code suffix
-    | (name, args, exp)::xs ->
+    | (name, params, exp)::xs ->
             let _ = sp := -1 in
-            let _ = Hashtbl.add func_store name args in
+            let symt = fill_symt [] params in
+            let _ = Hashtbl.add func_store name params in
             let _ = Buffer.add_string code "\n" in
             let _ = codegenx86_label name in
-            let _ = codegenx86 [] exp in
+            let _ = codegenx86 symt exp in
             let _ = Buffer.add_string code "popq  %rax\nret\n" in
             codegenx86_prog'' xs
 

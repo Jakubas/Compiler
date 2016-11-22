@@ -1,7 +1,5 @@
 let prefix =
-".file	\"templ.c\"
-.section	.rodata
-.LC0:
+".LC0:
 .string	\"%d\\n\"
 .text
 .globl	print
@@ -24,10 +22,13 @@ call	printf
 movl	$0, %edi
 call	exit
 .cfi_endproc
+"
+
+let main_prefix = "
 .LFE2:
 .size	print, .-print
 .globl	main
-.type	main, @function
+.type	main, @function\n
 main:
 .LFB3:
 .cfi_startproc
@@ -61,7 +62,8 @@ exception Codegenx86Error of string
 let sp = ref 0
 let lblcounter =
   let count = ref (0) in
-  fun () -> incr count; !count
+  fun do_incr -> if do_incr then begin incr count end; !count
+let func_store = Hashtbl.create 10
 
 (* get operation instruction *)
 let string_of_op = function
@@ -71,13 +73,13 @@ let string_of_op = function
     | _ -> raise (Codegenx86Error ("SipError: op not implemented"))
 
 (* get operation instruction *)
-let string_of_logical_op = function
+let string_of_bool_op = function
     | Leq   -> "jle   "
     | Geq   -> "jge   "
     | Equal -> "je    "
     | Noteq -> "jne   "
-    (*| And   -> "and"
-    | Or    -> "or"*)
+    (*| And   -> "and   "
+    | Or    -> "or    "*)
     | _ -> raise (Codegenx86Error ("SipError: op not implemented"))
 
 let code = Buffer.create 1000
@@ -86,8 +88,37 @@ let code = Buffer.create 1000
 let codegenx86_op op =
     "popq  %rax\n" ^
     "popq  %rbx\n" ^
-     (string_of_op op) ^ "%rax, %rbx\n" ^
-     "pushq %rbx\n" |> Buffer.add_string code
+    (string_of_op op) ^ "%rax, %rbx\n" ^
+    "pushq %rbx\n"
+    |> Buffer.add_string code
+
+let codegenx86_bool_op op =
+    let label = "lbltrue" ^ (string_of_int(lblcounter true)) in
+    let endlabel = "end" ^ (string_of_int(lblcounter false)) in
+    "popq  %rax\n" ^
+    "popq  %rbx\n" ^
+    "cmpq  %rax, %rbx\n" ^
+    string_of_bool_op op ^ label ^ "\n" ^
+    "pushq $0\n" ^
+    "jmp   " ^ endlabel ^ "\n" ^
+    label ^ ":\n" ^
+    "pushq $1\n" ^
+    endlabel ^ ":\n"
+    |> Buffer.add_string code
+
+let codegenx86_if label =
+    "popq  %rax\n" ^
+    "movq  $0, %rbx\n" ^
+    "cmpq  %rax, %rbx\n" ^
+    "jne   " ^ label ^ "\n"
+    |> Buffer.add_string code
+
+let codegenx86_while label =
+    "popq  %rax\n" ^
+    "movq  $0, %rbx\n" ^
+    "cmpq  %rax, %rbx\n" ^
+    "je   " ^ label ^ "\n"
+    |> Buffer.add_string code
 
 let codegenx86_div _ =
     "popq  %rbx\n" ^
@@ -119,13 +150,6 @@ let codegenx86_let _ =
     "pushq %rax\n"
     |> Buffer.add_string code
 
-let codegenx86_if op label =
-    "popq  %rax\n" ^
-    "popq  %rbx\n" ^
-    "cmpq  %rax, %rbx\n" ^
-    (string_of_logical_op op) ^ label ^ "\n"
-    |> Buffer.add_string code
-
 let codegenx86_jmp label =
     "jmp   " ^ label ^ "\n"
     |> Buffer.add_string code
@@ -134,15 +158,31 @@ let codegenx86_label label =
     label ^ ":\n"
     |> Buffer.add_string code
 
+let codegenx86_call label =
+    "pushq %rbp\n" ^
+    "movq  %rsp, %rbp\n" ^
+    "call  " ^ label ^ "\n" ^
+    "movq  %rbp, %rsp\n" ^
+    "popq  %rbp\n" ^
+    "pushq %rax\n"
+    |> Buffer.add_string code
+
 (* Symbol Table Functions *)
 let insert symbol addr symt = ((symbol, addr) :: symt)
 let rec lookup symbol symt = match symt with
   | [] -> raise (Codegenx86Error ("SipError: immutable symbol '" ^ symbol ^ "' has no value assigned to it"))
   | (symbol2,addr)::xs -> if symbol = symbol2 then addr else lookup symbol xs
+
 let insert_mutable symbol addr symt = (("_"^symbol, addr) :: symt)
 let rec lookup_mutable symbol symt = match symt with
 | [] -> raise (Codegenx86Error ("SipError: mutable symbol '" ^ symbol ^ "' has no value assigned to it"))
 | (symbol2,addr)::xs -> if ("_"^symbol) = symbol2 then addr else lookup_mutable symbol xs
+
+(*let insert_function func_symbol args symt = (("__"^func_symbol, args) :: symt)
+let rec lookup_function func_symbol symt = match symt with
+| [] -> raise (Codegenx86Error ("SipError: mutable symbol '" ^ func_symbol ^ "' has no value assigned to it"))
+| (func_symbol2,args)::xs -> if ("__"^func_symbol) = func_symbol2 then args else lookup_function func_symbol xs
+*)
 
 let rec codegenx86 symt = function
     | Seq (e1, e2) ->
@@ -152,6 +192,11 @@ let rec codegenx86 symt = function
         codegenx86 symt e1;
         codegenx86 symt e2;
         codegenx86_div();
+        sp := !sp - 1
+    | Operator ((Leq|Geq|Equal|Noteq) as oper, e1, e2) ->
+        codegenx86 symt e1;
+        codegenx86 symt e2;
+        codegenx86_bool_op oper;
         sp := !sp - 1
     | Operator (oper, e1, e2) ->
         codegenx86 symt e1;
@@ -170,11 +215,13 @@ let rec codegenx86 symt = function
         let symt' = insert x (!sp) symt in
         codegenx86 symt' e2;
         codegenx86_let();
+        sp := !sp - 1
     | New (x, e1, e2) ->
         codegenx86 symt e1;
         let symt' = insert_mutable x (!sp) symt in
         codegenx86 symt' e2;
         codegenx86_let();
+        sp := !sp - 1
     | Deref (Identifier x) ->
         let addr = lookup_mutable x symt in
         codegenx86_id addr;
@@ -184,27 +231,36 @@ let rec codegenx86 symt = function
         let addr = lookup_mutable x symt in
         codegenx86_asg addr;
         sp := !sp - 1
-    | If (Operator (oper, e1, e2), e3, e4) ->
+    | If (e1, e2, e3) ->
         codegenx86 symt e1;
-        codegenx86 symt e2;
-
-        let label = "label" ^ (string_of_int (lblcounter())) in
-        let endlabel = "endlabel" ^ (string_of_int (lblcounter())) in
-        let _ = codegenx86_if oper label in
-        let _ = codegenx86 symt e4 in
-        (* gen uncoditonal jump to end label *)
-        let _ = codegenx86_jmp endlabel in
-        (* gen label for when if statement is true *)
-        let _ = codegenx86_label label in
+        let label = "label" ^ (string_of_int (lblcounter true)) in
+        let endlabel = "endlabel" ^ (string_of_int (lblcounter false)) in
+        let _ = codegenx86_if label in
         let _ = codegenx86 symt e3 in
-        (* gen end label *)
-        codegenx86_label endlabel
-        
+        let _ = codegenx86_jmp endlabel in
+        let _ = codegenx86_label label in
+        let _ = codegenx86 symt e2 in
+        codegenx86_label endlabel;
+        sp := !sp - 1
+    | While (e1, e2) ->
+        let label = "whilestart" ^ (string_of_int (lblcounter true)) in
+        let endlabel = "whileend" ^ (string_of_int (lblcounter false)) in
+        let _ = codegenx86_label label in
+        let _ = codegenx86 symt e1 in
+        let _ = codegenx86_while endlabel in
+        let _ = codegenx86 symt e2 in
+        let _ = codegenx86_jmp label in
+        codegenx86_label endlabel;
+        sp := !sp - 1
+    | Application (Identifier name, Empty) ->
+        codegenx86_call name;
+        (* needs testing *)
+        sp := !sp + 1
     | x -> raise (Codegenx86Error ((string_of_exp x) ^ " not implemented"))
 
 let rec codegenx86_prog = function
     | [] -> raise (Codegenx86Error ("no main function defined"))
-    | (name, _, exp)::xs ->
+    | (name, args, exp)::xs ->
         if name = "main" then
             let _ = Buffer.reset code in
             let _ = Buffer.add_string code prefix in
@@ -216,6 +272,33 @@ let rec codegenx86_prog = function
         else
             codegenx86_prog xs
 
+let rec codegenx86_prog'' = function
+    | [] -> raise (Codegenx86Error ("no main function defined"))
+    | ("main", [], exp)::xs ->
+        let _ = sp := 0 in
+        let _ = Buffer.add_string code main_prefix in
+        let _ = codegenx86 [] exp in
+        let _ = Buffer.add_string code "popq  %rdi\n" in
+        Buffer.add_string code suffix
+    | (name, args, exp)::xs ->
+            let _ = sp := -1 in
+            let _ = Hashtbl.add func_store name args in
+            let _ = Buffer.add_string code "\n" in
+            let _ = codegenx86_label name in
+            let _ = codegenx86 [] exp in
+            let _ = Buffer.add_string code "popq  %rax\nret\n" in
+            codegenx86_prog'' xs
+
+let rec codegenx86_prog' filename prog =
+    let _ = Buffer.reset code in
+    let _ = Hashtbl.reset func_store in
+    let _ = sp := 0 in
+    let _ = Buffer.add_string code prefix in
+    let _ = codegenx86_prog'' prog in
+    let chan = open_out (filename ^ ".s") in
+    Buffer.output_buffer chan code;;
+
+(*
 let rec codegenx86_prog' filename = function
     | [] -> raise (Codegenx86Error ("no main function defined"))
     | (name, _, exp)::xs ->
@@ -223,6 +306,7 @@ let rec codegenx86_prog' filename = function
             let _ = Buffer.reset code in
             let _ = sp := 0 in
             let _ = Buffer.add_string code prefix in
+            let _ = Buffer.add_string code main_prefix in
             let _ = codegenx86 [] exp in
             let _ = Buffer.add_string code "popq  %rdi\n" in
             let _ = Buffer.add_string code suffix in
@@ -230,3 +314,4 @@ let rec codegenx86_prog' filename = function
             Buffer.output_buffer chan code
         else
             codegenx86_prog' filename xs;;
+*)

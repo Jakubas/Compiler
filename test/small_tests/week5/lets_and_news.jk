@@ -4,13 +4,13 @@ main() {
     let int y = 4;
     let int z = 6;
     /* mutables */
-    int x = 10;
-    int y = 20;
-    int z = 30;
+    int xx = 10;
+    int yy = 20;
+    int zz = 30;
     /* assignments */
-    x = 100;
-    z = 10;
-    z = 50;
-    y = 300;
-    *z + *y + *x + x + y + z;
+    xx = 100;
+    zz = 10;
+    zz = 50;
+    yy = 300;
+    *zz + *yy + *xx + x + y + z;
 }

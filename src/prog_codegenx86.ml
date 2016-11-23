@@ -78,8 +78,8 @@ let string_of_bool_op = function
     | Geq   -> "jge   "
     | Equal -> "je    "
     | Noteq -> "jne   "
-    (*| And   -> "and   "
-    | Or    -> "or    "*)
+    | And   -> "and   "
+    | Or    -> "or    "
     | _ -> raise (Codegenx86Error ("SipError: op not implemented"))
 
 let code = Buffer.create 1000
@@ -99,6 +99,21 @@ let codegenx86_bool_op op =
     "popq  %rbx\n" ^
     "cmpq  %rax, %rbx\n" ^
     string_of_bool_op op ^ label ^ "\n" ^
+    "pushq $0\n" ^
+    "jmp   " ^ endlabel ^ "\n" ^
+    label ^ ":\n" ^
+    "pushq $1\n" ^
+    endlabel ^ ":\n"
+    |> Buffer.add_string code
+
+let codegenx86_and_or_op op =
+    let label = "lbltrue" ^ (string_of_int(lblcounter true)) in
+    let endlabel = "end" ^ (string_of_int(lblcounter false)) in
+    "popq  %rax\n" ^
+    "popq  %rbx\n" ^
+    string_of_bool_op op ^ "%rax, %rbx\n" ^
+    "cmpq  $0, %rbx\n" ^
+    "jne   " ^ label ^ "\n" ^
     "pushq $0\n" ^
     "jmp   " ^ endlabel ^ "\n" ^
     label ^ ":\n" ^
@@ -217,6 +232,11 @@ let rec codegenx86 symt frame = function
         codegenx86 symt frame e2;
         codegenx86_div();
         sp := !sp - 1
+    | Operator ((And|Or) as oper, e1, e2) ->
+        codegenx86 symt frame e1;
+        codegenx86 symt frame e2;
+        codegenx86_and_or_op oper;
+        sp := !sp - 1
     | Operator ((Leq|Geq|Equal|Noteq) as oper, e1, e2) ->
         codegenx86 symt frame e1;
         codegenx86 symt frame e2;
@@ -267,16 +287,6 @@ let rec codegenx86 symt frame = function
         codegenx86 symt (Asg (e1, e2) :: frame) e1;
         codegenx86_asg();
         sp := !sp - 2
-    (*| Deref (Identifier x) ->
-        let addr = lookup_mutable x symt in
-        codegenx86_id addr;
-        sp := !sp + 1
-    *)
-    (*| Asg (Identifier x, e1) ->
-        let _ = codegenx86 symt e1 in
-        let addr = lookup_mutable x symt in
-        codegenx86_asg addr;
-        sp := !sp - 1*)
     | If (e1, e2, e3) ->
         codegenx86 symt frame e1;
         let label = "label" ^ (string_of_int (lblcounter true)) in

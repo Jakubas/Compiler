@@ -21,5 +21,7 @@ func3(a, b, c) {
 
 
 main() {
-  func1(func2(3, 97), func3(-1, 5, 48));
+    let int a = func2(3, 97);
+    let int b = func3(-1, 5, 48);
+    func1(a, b);
 }

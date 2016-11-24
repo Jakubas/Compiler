@@ -6,7 +6,8 @@ Value: 102
 
 recursiveAdd(a, b) {
   if (*a <= 100) {
-    recursiveAdd(*a + *b, *b);
+    let int c = *a + *b;
+    recursiveAdd(c, *b);
   } else {
     *a
   }

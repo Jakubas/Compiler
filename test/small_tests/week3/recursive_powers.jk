@@ -3,7 +3,7 @@ The function powerN given a base and a n, will recursively find the nth power
 of the base
 Value: 1024
 */
-powerN2(currentval, base, n) {
+/*powerN2(currentval, base, n) {
   int base2 = *currentval;
   if (*n >= 2) {
     base2 = *currentval * *base;
@@ -17,9 +17,17 @@ powerN2(currentval, base, n) {
 
 powerN(base, n) {
   powerN2(*base, *base, *n);
+}*/
+
+test2(a, b) {
+ *a + *b;
+}
+
+test(a, b) {
+ test2(*a, *b);
 }
 
 main() {
-  powerN(2, 10);
-
+    test(5, 5);
+  /*powerN(2, 10);*/
 }

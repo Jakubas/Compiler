@@ -1,0 +1,59 @@
+main2() {
+    int x = 1;
+    int y = 10;
+    int z = 100;
+    *y;
+}
+
+main3() {
+    let int x = 2;
+    let int y = 20;
+    let int z = 200;
+    x;
+}
+
+main4(a) {
+    *a;
+}
+
+main5(a,b,c,d,e) {
+    *a * *b / *c * *d / *e;
+}
+
+main() {
+    int x = 0;
+    while (*x <= 999 & 1 == 1) {
+       x = *x + 1;
+    }
+    let int xx = 10 - 10000;
+    let int yy = 200;
+    let int xx = 100;
+    let int xx = 1000;
+    let int xx = xx - 900;
+    if (4 <= 5) {
+        if (4 <= 6) {
+        x = *x + xx;
+        } else {
+            x = *x + yy;
+        }
+    } else {
+        x = *x;
+    }
+    let int q = 10000;
+    int qq = 20000;
+    int qqq = *qq + *x + main2() + main3() + main4(0 + 10) + main5(*qq,4,2,10,5);
+    int r = *qqq * 2 / 2;
+    int r2 = 55;
+    if (0 | 0 == 1) {
+        r;
+    } else {
+        r2;
+    } = 5;
+    let int r3 = 5;
+    *r;
+    *if (1 >= -5 & -100 <= -50) {
+        r;
+    } else {
+        r2;
+    }
+}

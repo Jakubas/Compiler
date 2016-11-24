@@ -72,8 +72,6 @@ let test_files = [
     ("test/small_tests/week5/lets_and_news.jk", 462);
     ("test/small_tests/week5/sample.jk", 310);
     ("src/test.jk", 5);
-    ("test/small_tests/week3/recursion.jk", 102);
-    ("test/small_tests/week3/recursive_powers.jk", 1024);
 ];;
 
 batch_test test_files;

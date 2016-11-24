@@ -121,6 +121,19 @@ let codegenx86_and_or_op op =
     endlabel ^ ":\n"
     |> Buffer.add_string code
 
+let codegenx86_negate _ =
+    let label = "lbltrue" ^ (string_of_int(lblcounter true)) in
+    let endlabel = "end" ^ (string_of_int(lblcounter false)) in
+    "popq  %rax\n" ^
+    "cmpq  $0, %rax\n" ^
+    "jne   " ^ label ^ "\n" ^
+    "pushq $1\n" ^
+    "jmp   " ^ endlabel ^ "\n" ^
+    label ^ ":\n" ^
+    "pushq $0\n" ^
+    endlabel ^ ":\n"
+    |> Buffer.add_string code
+
 let codegenx86_if label =
     "popq  %rax\n" ^
     "movq  $0, %rbx\n" ^
@@ -192,10 +205,17 @@ let codegenx86_label label =
     label ^ ":\n"
     |> Buffer.add_string code
 
-let codegenx86_stackframe _ =
+let codegenx86_stackframe size_args =
     "pushq %rbp\n" ^
     "movq  %rsp, %rbp\n"
-    |> Buffer.add_string code
+    |> Buffer.add_string code;
+    let size = ref size_args in
+    while !size > 0 do
+        "movq  " ^ (8 * !size |> string_of_int) ^  "(%rbp), %rax\n" ^
+        "pushq %rax\n"
+        |> Buffer.add_string code;
+        size := !size - 1;
+    done
 
 let codegenx86_call label =
     "call  " ^ label ^ "\n" ^
@@ -309,22 +329,27 @@ let rec codegenx86 symt frame = function
         codegenx86_label endlabel;
         sp := !sp - 1
     | Application (Identifier name, args) ->
-        codegenx86_stackframe();
+        let size_args = codegen_args symt 0 args in
         let prev_sp = !sp in
         let _ = sp := -1 in
-        let _ = codegen_args symt args in
+        let _ = codegenx86_stackframe size_args in
         let _ = codegenx86_call name in
         sp := prev_sp;
         (* needs testing *)
         sp := !sp + 1
+    | Negate (op, e1) ->
+        codegenx86 symt frame e1;
+        codegenx86_negate()
+    | Printint _ -> ()
+    | Readint -> ()
     | x -> raise (Codegenx86Error ((string_of_exp x) ^ " not implemented"))
 
-and codegen_args symt = function
-  | Empty -> ()
+and codegen_args symt size_args = function
+  | Empty -> size_args
   | Arg(e1, e2) ->
     codegenx86 symt [] e1;
-    codegen_args symt e2
-  | e -> codegenx86 symt [] e
+    codegen_args symt (size_args+1) e2
+  | e -> codegenx86 symt [] e; (size_args+1)
 
 let rec codegenx86_prog = function
     | [] -> raise (Codegenx86Error ("no main function defined"))
@@ -340,29 +365,32 @@ let rec codegenx86_prog = function
         else
             codegenx86_prog xs
 
-let rec codegenx86_prog'' = function
-    | [] -> raise (Codegenx86Error ("no main function defined"))
-    | ("main", [], exp)::xs ->
-        let _ = sp := 0 in
-        let _ = Buffer.add_string code main_prefix in
-        let _ = codegenx86 [] [] exp in
-        let _ = Buffer.add_string code "popq  %rdi\n" in
-        Buffer.add_string code suffix
+let rec codegenx86_prog'' main_frame = function
+    | [] -> (match main_frame with
+        | ("main", [], exp) ->
+            let _ = sp := 0 in
+            let _ = Buffer.add_string code main_prefix in
+            let _ = codegenx86 [] [] exp in
+            let _ = Buffer.add_string code "popq  %rdi\n" in
+            Buffer.add_string code suffix
+        | _ -> raise (Codegenx86Error ("no main function defined")))
+    | ("main", [], exp) as main::xs ->
+        codegenx86_prog'' main xs
     | (name, params, exp)::xs ->
-            let _ = sp := -1 in
-            let symt = fill_symt [] params in
-            let _ = Hashtbl.add func_store name params in
-            let _ = Buffer.add_string code "\n" in
-            let _ = codegenx86_label name in
-            let _ = codegenx86 symt [] exp in
-            let _ = Buffer.add_string code "popq  %rax\nret\n" in
-            codegenx86_prog'' xs
+        let _ = sp := -1 in
+        let symt = fill_symt [] params in
+        let _ = Hashtbl.add func_store name params in
+        let _ = Buffer.add_string code "\n" in
+        let _ = codegenx86_label name in
+        let _ = codegenx86 symt [] exp in
+        let _ = Buffer.add_string code "popq  %rax\nret\n" in
+        codegenx86_prog'' main_frame xs
 
 let rec codegenx86_prog' filename prog =
     let _ = Buffer.reset code in
     let _ = Hashtbl.reset func_store in
     let _ = sp := 0 in
     let _ = Buffer.add_string code prefix in
-    let _ = codegenx86_prog'' prog in
+    let _ = codegenx86_prog'' ("", [], Empty) prog in
     let chan = open_out (filename ^ ".s") in
     Buffer.output_buffer chan code;;

@@ -71,7 +71,7 @@ let test_files = [
     (* Week 5 Test Cases *)
     ("test/small_tests/week5/lets_and_news.jk", 462);
     ("test/small_tests/week5/sample.jk", 310);
-    ("src/test.jk", 5);
+    ("src/test.jk", 80005);
 ];;
 
 batch_test test_files;

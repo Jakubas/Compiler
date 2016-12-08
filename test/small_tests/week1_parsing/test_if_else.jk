@@ -5,8 +5,8 @@ then the result is value of (x + y), otherwise the result is value of y
 Value: 8
 */
 main() {
-  x = 5;
-  y = 3;
+  int x = 5;
+  int y = 3;
   if (*x == 5) {
     *x + *y;
   } else {

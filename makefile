@@ -7,6 +7,9 @@ clean:
 	rm -rf _build/* && rm -f *.native && cd test && find . -type f -name '*.s' -delete
 
 tests:
+	ocamlbuild -Is src,test -use-menhir -use-ocamlfind test_all.native && ./test_all.native
+
+tests2:
 	ocamlbuild -Is src,test -use-menhir -use-ocamlfind optimise_test.native eval_test.native parse_test.native optimise.native codegen.native
 
 testinterpret:
@@ -31,4 +34,4 @@ docker: clean
 	docker build -t compiler .
 
 run:
-	docker run compiler
+	docker run -it compiler /bin/bash

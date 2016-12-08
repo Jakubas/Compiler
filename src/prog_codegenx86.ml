@@ -205,23 +205,23 @@ let codegenx86_label label =
     label ^ ":\n"
     |> Buffer.add_string code
 
-let codegenx86_stackframe size_args =
+let codegenx86_stackframe _ =
+    "//stackframe\n" ^
     "pushq %rbp\n" ^
-    "movq  %rsp, %rbp\n"
-    |> Buffer.add_string code;
-    let size = ref size_args in
-    while !size > 0 do
-        "movq  " ^ (8 * !size |> string_of_int) ^  "(%rbp), %rax\n" ^
-        "pushq %rax\n"
-        |> Buffer.add_string code;
-        size := !size - 1;
-    done
+    "movq  %rsp, %rbp\n" ^
+    "addq  $8, %rbp\n"
+    |> Buffer.add_string code
 
 let codegenx86_call label =
     "call  " ^ label ^ "\n" ^
-    "movq  %rbp, %rsp\n" ^
-    "popq  %rbp\n" ^
     "pushq %rax\n"
+    |> Buffer.add_string code
+
+let codegenx86_stackframe_end _ =
+    "//stackframe_end\n" ^
+    "subq  $8, %rbp\n" ^
+    "movq  %rbp, %rsp\n" ^
+    "popq  %rbp\n"
     |> Buffer.add_string code
 
 (* Symbol Table Functions *)
@@ -235,6 +235,12 @@ let rec lookup_mutable symbol symt = match symt with
     | [] -> raise (Codegenx86Error ("Codegenx86Error: mutable symbol '" ^ symbol ^ "' has no value assigned to it"))
     | (symbol2,(addr, true))::xs -> if symbol = symbol2 then addr else lookup_mutable symbol xs
     | (symbol2,(addr, false))::xs -> lookup_mutable symbol xs
+
+(*-16 + 40 = 24
+func(a,b,c)
+push a 24
+push b 16
+push c 8*)
 
 let rec fill_symt acc = function
     | []    -> acc
@@ -332,10 +338,10 @@ let rec codegenx86 symt frame = function
         let size_args = codegen_args symt 0 args in
         let prev_sp = !sp in
         let _ = sp := -1 in
-        let _ = codegenx86_stackframe size_args in
+        (*let _ = codegenx86_stackframe size_args in*)
         let _ = codegenx86_call name in
+        (*let _ = codegenx86_stackframe_end size_args in*)
         sp := prev_sp;
-        (* needs testing *)
         sp := !sp + 1
     | Negate (op, e1) ->
         codegenx86 symt frame e1;
@@ -377,13 +383,17 @@ let rec codegenx86_prog'' main_frame = function
     | ("main", [], exp) as main::xs ->
         codegenx86_prog'' main xs
     | (name, params, exp)::xs ->
-        let _ = sp := -1 in
+        let _ = sp := (-(List.length params))-2 in
         let symt = fill_symt [] params in
+        let _ = sp := -1 in
         let _ = Hashtbl.add func_store name params in
         let _ = Buffer.add_string code "\n" in
         let _ = codegenx86_label name in
+        let _ = codegenx86_stackframe() in
         let _ = codegenx86 symt [] exp in
-        let _ = Buffer.add_string code "popq  %rax\nret\n" in
+        let _ = Buffer.add_string code "popq  %rax\n" in
+        let _ = codegenx86_stackframe_end() in
+        let _ = Buffer.add_string code "ret\n" in
         codegenx86_prog'' main_frame xs
 
 let rec codegenx86_prog' filename prog =

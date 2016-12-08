@@ -1,6 +1,7 @@
 /* check if multiple functions can be defined in the same file */
-main(a,b) {
-  a = *a + 1;
+main() {
+  int a = 2 - 10;
+  *a;
 }
 
 main2(c) {

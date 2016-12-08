@@ -4,7 +4,7 @@ This program creates an int, assigns to it and then references it
 Value: x
 */
 main() {
-  x = -5;
+  int x = -5;
   x = *x * *x / 5;
-  x;
+  *x;
 }

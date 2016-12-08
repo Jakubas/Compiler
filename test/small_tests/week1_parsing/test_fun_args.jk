@@ -1,6 +1,11 @@
 /* this test case checks the syntax of functions with arguments
 this program multiplies the function arguments
 */
-main(a,b,c) {
-  *a * *b - *c;
+
+f(a,b,c) {
+    *a * *b - *c;
+}
+
+main() {
+  f(1,2,3);
 }

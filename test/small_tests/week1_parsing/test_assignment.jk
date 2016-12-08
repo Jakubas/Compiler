@@ -4,6 +4,7 @@ This program creates an int and assigns a value to it
 Value: 6
 */
 main() {
-  x = 0;
+  int x = 0;
   x = 6;
+  *x;
 }

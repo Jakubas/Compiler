@@ -2,5 +2,5 @@
 the program will create a non mutable variable x and dereference it*/
 main() {
   let int x = 5;
-  *x;
+  x;
 }

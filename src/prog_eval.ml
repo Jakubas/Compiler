@@ -34,7 +34,7 @@ let value_to_string = function
   | Nothing' -> raise (RuntimeError ("RuntimeError: expected value of type Int', actual value is Nothing'"))
 
 let value_to_bool = function
-  | Int' i  -> raise (RuntimeError ("RuntimeError: expected value of type Id', actual value is Int' " ^ (string_of_int i)))
+  | Int' i  -> if i == 0 then true else false
   | Id' str -> raise (RuntimeError ("RuntimeError: expected value of type Bool', actual value is Id' " ^ str))
   | Bool' b -> b
   | Nothing' -> raise (RuntimeError ("RuntimeError: expected value of type Int', actual value is Nothing'"))

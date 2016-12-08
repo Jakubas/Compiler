@@ -1,0 +1,63 @@
+abc(q,r) {
+    *q + *r;
+}
+
+funcTestHelper(a,b) {
+    a = *a * *b;
+    *a;
+}
+
+funcTestHelper2(b1,b2) {
+    b1 = *b1 / *b2;
+    *b1;
+}
+
+/* a*b/c */
+funcTest(a,b,c) {
+    a = funcTestHelper(*a,*b);
+    a = funcTestHelper2(*a,*c);
+    *a;
+}
+
+
+main() {
+    int x = 0;
+    while (*x <= 999 & 1 == 1) {
+       x = *x + 1;
+    }
+
+    /* now x is 1000 */
+    let int a = 10 - 10000;
+    let int b = 200;
+    let int a = 100;
+    let int a = 1000;
+    let int a = a - 500; /* 500 */
+
+    if (4 <= 5) {
+        if (4 <= 6) {
+            x = *x + a; /* 1500 */
+        } else {
+            x = *x + b; /* 1200 */
+        }
+    } else {
+        x = *x; /* 1000 */
+    }
+
+    int y = funcTest(abc(750,750), 4, 2); /* 3000 */
+    int z = abc(500,1000); /* 1500 */
+    int y = *x + *y + *z; /* 6000 */
+
+    /* sets y to y */
+    if (0 | 0 == 1) {
+        x;
+    } else {
+        y;
+    } = *y;
+
+
+    *if (1 >= -5 & -100 <= -50) {
+        y;
+    } else {
+        x;
+    } /4;
+}

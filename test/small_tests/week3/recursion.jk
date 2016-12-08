@@ -5,14 +5,14 @@ Value: 102
 
 
 recursiveAdd(a, b) {
-  if (*a <= 100) {
-    let int c = *a + *b;
-    recursiveAdd(c, *b);
+ if (*a <= 100) {
+    a = *a + *b;
+    recursiveAdd(*a, *b);
   } else {
-    *a
+    *a;
   }
 }
 
 main() {
- recursiveAdd(0, 2);
+  recursiveAdd(0, 2);
 }

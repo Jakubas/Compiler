@@ -3,8 +3,8 @@ Check if operators and opcodes syntax is defined properly
 Value: true
 */
 main() {
-  x = 1;
-  y = 1;
+  int x = 1;
+  int y = 1;
   1 + 1 / *x * 5 - 6;
   *x <= 6;
   *y >= 4;

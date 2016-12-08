@@ -1,33 +1,22 @@
 /*
 The function powerN given a base and a n, will recursively find the nth power
 of the base
-Value: 1024
+Value: 16
 */
-/*powerN2(currentval, base, n) {
-  int base2 = *currentval;
+powerN2(currentval, base, n) {
   if (*n >= 2) {
-    base2 = *currentval * *base;
-    int n2 = *n - 1;
-    printInt(*base2);
-    powerN2(*base2, *base, *n2);
+    currentval = *currentval * *base;
+    printInt(*currentval);
+    powerN2(*currentval, *base, *n - 1);
   } else {
-    *base2;
+    *currentval;
   }
 }
 
 powerN(base, n) {
   powerN2(*base, *base, *n);
-}*/
-
-test2(a, b) {
- *a + *b;
-}
-
-test(a, b) {
- test2(*a, *b);
 }
 
 main() {
-    test(5, 5);
-  /*powerN(2, 10);*/
+  powerN(2, 4);
 }

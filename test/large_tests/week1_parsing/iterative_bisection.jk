@@ -7,7 +7,7 @@ value
 */
 
 f(x) {
-  fx = *x * *x - 3;
+  int fx = *x * *x - 3;
   *fx;
 }
 

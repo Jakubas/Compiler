@@ -2,6 +2,11 @@
 This test case checks the syntax of application
 Test application of f(5)
 */
+
 f(a) {
+  *a;
+}
+
+main() {
   f(5);
 }

@@ -1,0 +1,60 @@
+/* inaccurate due to integer division */
+
+
+calculateMovingAverageIterative(value, index, prevAverage) {
+    let int prevIndex = *index - 1;
+    let int total = *prevAverage * prevIndex + *value;
+    let int average = total / *index;
+    average;
+}
+
+/*
+value is the intial value
+numOfElems is the number of elements
+*/
+movingAverageIterative(value, numOfElems) {
+    int i = 1;
+    int average = 0;
+    while (*i <= *numOfElems) {
+
+        average = calculateMovingAverageIterative(*value, *i, *average);
+        /* the value is incremented by 2 after each movingAverage calculation*/
+        value = *value + 2;
+        i = *i + 1;
+    }
+    *average;
+}
+
+movingAverageRecursive2(value, numOfElems, average, index) {
+
+    let int prevIndex = *index - 1;
+    let int total = *average * prevIndex + *value;
+    average = total / *index;
+
+    if (*index <= *numOfElems) {
+
+        /* the value is incremented by 2 after each movingAverage calculation*/
+        value = *value + 2;
+        /* increment index */
+        index = *index + 1;
+
+        movingAverageRecursive2(*value, *numOfElems, *average, *index);
+
+    } else {
+        *average;
+    }
+}
+
+/*
+value is the intial value
+numOfElems is the number of elements
+*/
+movingAverageRecursive(value, numOfElems) {
+    movingAverageRecursive2(*value, *numOfElems-1, *value, 1);
+}
+
+/* simulates a moving average of an array of equally incrementing numbers */
+main() {
+    movingAverageIterative(2, 10);
+    movingAverageRecursive(2, 10);
+}

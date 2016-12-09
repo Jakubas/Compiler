@@ -1,0 +1,50 @@
+
+divisibleByThree(n, max) {
+    int result = 1;
+    int i = 3;
+    while(*i <= *max) {
+        if (*i == *n) {
+            result = 0;
+            i = *max + 1;
+        } else {
+            i = *i + 3;
+        }
+    }
+    *result;
+}
+
+divisibleByFive(n, max) {
+    int result = 1;
+    int i = 5;
+    while(*i <= *max) {
+        if (*i == *n) {
+            result = 0;
+            i = *max + 1;
+        } else {
+            i = *i + 5;
+        }
+    }
+    *result;
+}
+
+main() {
+    int i = 1;
+    int max = 100;
+    while (*i <= *max) {
+        if (divisibleByThree(*i, *max) & divisibleByFive(*i, *max)) {
+            printInt(15);
+        } else {
+            if (divisibleByThree(*i, *max)) {
+                printInt(3);
+            } else {
+                if (divisibleByFive(*i, *max)) {
+                    printInt(5);
+                } else {
+                    printInt(*i);
+                }
+            }
+        }
+        i = *i + 1;
+    }
+    *i;
+}

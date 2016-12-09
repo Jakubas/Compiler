@@ -68,6 +68,7 @@ let test_files = [
   ("test/small_tests/week6/test.jk", Int' 1500, 1500);
   ("test/small_tests/week6/recursion.jk", Int' 0, 0);
   ("test/small_tests/week6/convolution.jk", Int' 11, 11);
+  ("test/small_tests/week6/fizzbuzz.jk", Int' 101, 101);
 ];;
 
 print_string "\n\nParsing test\n\n";
